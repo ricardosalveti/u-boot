@@ -182,7 +182,16 @@
 /* Physical Memory Map */
 #define CONFIG_NR_DRAM_BANKS		1
 #define PHYS_SDRAM_1			(V2M_BASE)	/* SDRAM Bank #1 */
-#define PHYS_SDRAM_1_SIZE		0x80000000	/* 2048 MB */
+
+#define DRAM_SCP_SIZE		0x00200000
+#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+/* Top 16MB reserved for secure use */
+#define DRAM_SEC_SIZE		0x00E00000
+#define PHYS_SDRAM_1_SIZE	0x80000000 - DRAM_SCP_SIZE - DRAM_SEC_SIZE
+#else
+#define PHYS_SDRAM_1_SIZE	0x80000000 - DRAM_SCP_SIZE /* 2048 MB */
+#endif
+
 #define CONFIG_SYS_SDRAM_BASE		PHYS_SDRAM_1
 
 /* Initial environment variables */
