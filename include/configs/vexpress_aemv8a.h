@@ -203,7 +203,7 @@
  * be copied into DRAM
  */
 #define CONFIG_EXTRA_ENV_SETTINGS	\
-				"kernel_name=Image\0"	\
+				"kernel_name=norkern\0"	\
 				"kernel_addr=0x80000000\0" \
 				"initrd_name=ramdisk.img\0"	\
 				"initrd_addr=0x84000000\0"	\
