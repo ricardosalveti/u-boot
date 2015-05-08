@@ -223,7 +223,8 @@
 #define CONFIG_BOOTCOMMAND	"afs load ${kernel_name} ${kernel_addr} ; " \
 				"afs load  ${fdt_name} ${fdt_addr} ; " \
 				"fdt addr ${fdt_addr}; fdt resize; " \
-				"booti ${kernel_addr} - ${fdt_addr}"
+				"afs load  ${initrd_name} ${initrd_addr} ; " \
+				"booti ${kernel_addr} ${initrd_addr} ${fdt_addr}"
 
 #define CONFIG_BOOTDELAY		1
 
