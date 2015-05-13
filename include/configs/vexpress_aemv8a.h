@@ -230,7 +230,7 @@
 
 #elif CONFIG_TARGET_VEXPRESS64_BASE_FVP
 #define CONFIG_EXTRA_ENV_SETTINGS	\
-				"kernel_name=uImage\0"		\
+				"kernel_name=Image\0"		\
 				"kernel_addr=0x80000000\0"	\
 				"initrd_name=ramdisk.img\0"	\
 				"initrd_addr=0x88000000\0"	\
@@ -241,14 +241,14 @@
 
 #define CONFIG_BOOTARGS		"console=ttyAMA0 earlyprintk=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
-				"loglevel=9"
+				"loglevel=9 root=/dev/vda2"
 
 #define CONFIG_BOOTCOMMAND	"smhload ${kernel_name} ${kernel_addr}; " \
 				"smhload ${fdt_name} $fdt_addr; " \
 				"smhload ${initrd_name} $initrd_addr initrd_end; " \
 				"fdt addr $fdt_addr; fdt resize; " \
 				"fdt chosen $initrd_addr $initrd_end; " \
-				"bootm $kernel_addr - $fdt_addr"
+				"booti $kernel_addr - $fdt_addr"
 
 #define CONFIG_BOOTDELAY		1
 
