@@ -185,9 +185,9 @@
  * be copied into DRAM
  */
 #define CONFIG_EXTRA_ENV_SETTINGS	\
-				"kernel_name=Image\0"	\
+				"kernel_name=norkern\0"	\
 				"kernel_addr=0x80000000\0" \
-				"fdt_name=juno\0" \
+				"fdt_name=board.dtb\0" \
 				"fdt_addr=0x83000000\0" \
 				"fdt_high=0xffffffffffffffff\0" \
 				"initrd_high=0xffffffffffffffff\0" \
