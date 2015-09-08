@@ -246,8 +246,8 @@
 #define CONFIG_BOOTARGS		"console=ttyAMA0 earlyprintk=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
 				"androidboot.hardware=fvpbase "\
-				"root=/dev/vda2 rw " \
-				"rootwait "
+				"root=/dev/vda2 rw "\
+				"rootwait "\
 				"loglevel=9"
 
 #define CONFIG_BOOTCOMMAND	"booti $kernel_addr $initrd_addr $fdt_addr"
