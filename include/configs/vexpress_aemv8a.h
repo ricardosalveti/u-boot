@@ -76,6 +76,8 @@
 #define V2M_CLCD			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(31))
 
 /* System register offsets. */
+#define V2M_SYS_CFGMACL			(V2M_SYSREGS + 0x074)
+#define V2M_SYS_CFGMACH			(V2M_SYSREGS + 0x078)
 #define V2M_SYS_CFGDATA			(V2M_SYSREGS + 0x0a0)
 #define V2M_SYS_CFGCTRL			(V2M_SYSREGS + 0x0a4)
 #define V2M_SYS_CFGSTAT			(V2M_SYSREGS + 0x0a8)
@@ -201,6 +203,7 @@
 				"  setenv initrd_param ${initrd_addr}; "\
 				"  else setenv initrd_param -; "\
 				"fi ; " \
+				"setenv bootargs ${bootargs} ${bootargs_sky2}; "\
 				"booti ${kernel_addr} ${initrd_param} ${fdt_addr}"
 
 
