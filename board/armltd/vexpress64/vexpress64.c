@@ -93,6 +93,30 @@ void reset_cpu(ulong addr)
 int board_eth_init(bd_t *bis)
 {
 	int rc = 0;
+#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+	char *bootargs_sky2 = getenv("bootargs_sky2");
+
+	if (!bootargs_sky2){
+		char macstr[255];
+		u8 mac[6];
+		u32 macl, mach;
+
+		macl = readl(V2M_SYS_CFGMACL);
+		mach = readl(V2M_SYS_CFGMACH);
+
+		if (mach && macl){
+			mac[0] = (mach >> 8) & 0xff;
+			mac[1] = mach & 0xff;
+			mac[2] = (macl >> 24) & 0xff;
+			mac[3] = (macl >> 16) & 0xff;
+			mac[4] = (macl >> 8) & 0xff;
+			mac[5] = macl & 0xff;
+
+			sprintf(macstr, "sky2.mac_address=0x%2.2x,0x%2.2x,0x%2.2x,0x%2.2x,0x%2.2x,0x%2.2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+			setenv("bootargs_sky2", macstr);
+		}
+	}
+#endif
 #ifdef CONFIG_SMC91111
 	rc = smc91111_initialize(0, CONFIG_SMC91111_BASE);
 #endif
