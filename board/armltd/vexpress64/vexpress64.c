@@ -82,11 +82,45 @@ int dram_init_banksize(void)
 	return 0;
 }
 
+#define SYS_CFG_START		(1 << 31)
+#define SYS_CFG_WRITE		(1 << 30)
+#define SYS_CFG_REBOOT		(9 << 20)
+#define SYS_CFG_SITE_MB		(0 << 16)
+
+#define SYS_CFG_ERR		(1 << 1)
+#define SYS_CFG_COMPLETE	(1 << 0)
+
+int v2m_cfg_write(u32 devfn, u32 data)
+{
+	/* Configuration interface broken? */
+	u32 val;
+
+	devfn |= SYS_CFG_START | SYS_CFG_WRITE;
+
+	val = readl(V2M_SYS_CFGSTAT);
+	writel(val & ~SYS_CFG_COMPLETE, V2M_SYS_CFGSTAT);
+
+	writel(data, V2M_SYS_CFGDATA);
+	writel(devfn, V2M_SYS_CFGCTRL);
+
+	do {
+		val = readl(V2M_SYS_CFGSTAT);
+	} while (val == 0);
+
+	return !!(val & SYS_CFG_ERR);
+}
 /*
  * Board specific reset that is system reset.
  */
 void reset_cpu(ulong addr)
 {
+	if (v2m_cfg_write(SYS_CFG_REBOOT | SYS_CFG_SITE_MB, 0))
+		printf("Unable to reboot\n");
+	else
+		/* The reset doesn't happen immediately */
+		/* Delay while the motherboard gets around to it */
+		/* rather than while(1) to hang forever, in case something went wrong */
+		mdelay(1000);
 }
 
 /*
