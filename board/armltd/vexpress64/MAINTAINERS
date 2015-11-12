@@ -14,3 +14,8 @@ JUNO DEVELOPMENT PLATFORM BOARD
 M:	Linus Walleij <linus.walleij@linaro.org>
 S:	Maintained
 F:	configs/vexpress_aemv8a_juno_defconfig
+
+SYSTEM GUIDANCE FOR MOBILE FVP PLATFORM
+M:	ARM <support@arm.com>
+S:	Maintained
+F:	configs/sgm_fvp_defconfig

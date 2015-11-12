@@ -32,7 +32,8 @@
 /* ATF loads u-boot here for BASE_FVP model */
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x03f00000)
 #elif defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
-	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32) || \
+	defined(CONFIG_TARGET_SGM_FVP)
 #define CONFIG_SYS_TEXT_BASE		0xe0000000
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x7fff0)
 #endif
@@ -61,10 +62,11 @@
 #define V2M_KMI1			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(7))
 
 #if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
-	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32) || \
+	defined(CONFIG_TARGET_SGM_FVP)
 #define V2M_UART0			0x7ff80000
 #define V2M_UART1			0x7ff70000
-#else /* Not Juno */
+#else /* Not Juno or FVP */
 #define V2M_UART0			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(9))
 #define V2M_UART1			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(10))
 #define V2M_UART2			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(11))
@@ -103,7 +105,8 @@
 #define GICD_BASE			(0x2f000000)
 #define GICC_BASE			(0x2c000000)
 #elif defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
-	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32) || \
+	defined(CONFIG_TARGET_SGM_FVP)
 #define GICD_BASE			(0x2C010000)
 #define GICC_BASE			(0x2C02f000)
 #endif
@@ -125,12 +128,17 @@
 #define CONFIG_SMC91111_BASE		(0x01A000000)
 #endif
 
+#define CONFIG_CONS_INDEX              0
+#define CONFIG_PL01X_SERIAL
+#define CONFIG_PL011_SERIAL
+
 /* PL011 Serial Configuration */
 #define CONFIG_CONS_INDEX		0
 #define CONFIG_PL01X_SERIAL
 #define CONFIG_PL011_SERIAL
 #if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
-	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32) || \
+	defined(CONFIG_TARGET_SGM_FVP)
 #define CONFIG_PL011_CLOCK		7273800
 #else
 #define CONFIG_PL011_CLOCK		24000000
@@ -256,6 +264,16 @@
 				"echo semihosting load failed, try booting "\
 				"with contents of DRAM; " \
 				BOOT_TYPE " $kernel_addr $initrd_addr $fdt_addr"
+#elif CONFIG_TARGET_SGM_FVP
+#define CONFIG_EXTRA_ENV_SETTINGS	\
+				"kernel_addr_r=0x80080000\0"	\
+				"initrd_addr_r=0x88000000\0"	\
+				"fdt_addr_r=0x83000000\0"	\
+				"fdt_high=0xffffffffffffffff\0"	\
+				"initrd_high=0xffffffffffffffff\0"
+
+#define CONFIG_BOOTCOMMAND	"bootm ${kernel_addr_r} ${initrd_addr_r} " \
+				"${fdt_addr_r}"
 #endif
 
 /* Monitor Command Prompt */

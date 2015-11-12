@@ -164,3 +164,11 @@ int board_eth_init(bd_t *bis)
 #endif
 	return rc;
 }
+
+#ifdef CONFIG_DISPLAY_CPUINFO
+int print_cpuinfo(void)
+{
+	printf("CPU:   ARMv8 - FVP\n");
+	return 0;
+}
+#endif /* CONFIG_DISPLAY_CPUINFO */

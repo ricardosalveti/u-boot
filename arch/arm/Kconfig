@@ -941,6 +941,10 @@ config TARGET_VEXPRESS64_JUNO_AARCH32
 	  This target is derived from TARGET_VEXPRESS64_JUNO, except it uses an
 	  ARMv7 CPU type to support booting in Aarch32 mode.
 
+config TARGET_SGM_FVP
+	bool "Support System Guidance for Mobile FVP"
+	select ARM64
+
 config TARGET_LS2080A_EMU
 	bool "Support ls2080a_emu"
 	select ARCH_LS2080A
