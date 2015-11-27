@@ -182,6 +182,7 @@
 				"root=/dev/sda2 rw " \
 				"rootwait "\
 				"earlyprintk=pl011,0x7ff80000 debug "\
+				"systemd.log_target=null "\
 				"user_debug=31 "\
 				"androidboot.hardware=juno "\
 				"loglevel=9"
@@ -222,6 +223,7 @@
 
 #define CONFIG_BOOTARGS		"console=ttyAMA0 earlyprintk=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
+				"systemd.log_target=null "\
 				"loglevel=9"
 
 #define CONFIG_BOOTCOMMAND	"smhload ${kernel_name} ${kernel_addr}; " \
@@ -243,6 +245,7 @@
 
 #define CONFIG_BOOTARGS		"console=ttyAMA0 earlyprintk=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
+				"systemd.log_target=null "\
 				"androidboot.hardware=fvpbase "\
 				"root=/dev/vda2 rw "\
 				"rootwait "\
