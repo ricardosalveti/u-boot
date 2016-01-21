@@ -183,7 +183,7 @@
 #define CONFIG_BOOTARGS		"console=ttyAMA0,115200n8 " \
 				"root=/dev/sda2 rw " \
 				"rootwait "\
-				"earlyprintk=pl011,0x7ff80000 debug "\
+				"earlycon=pl011,0x7ff80000 debug "\
 				"systemd.log_target=null "\
 				"user_debug=31 "\
 				"androidboot.hardware=juno "\
@@ -223,7 +223,7 @@
 				"fdt_high=0xffffffffffffffff\0"	\
 				"initrd_high=0xffffffffffffffff\0"
 
-#define CONFIG_BOOTARGS		"console=ttyAMA0 earlyprintk=pl011,"\
+#define CONFIG_BOOTARGS		"console=ttyAMA0 earlycon=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
 				"systemd.log_target=null "\
 				"loglevel=9"
@@ -245,7 +245,7 @@
 				"fdt_high=0xffffffffffffffff\0"	\
 				"initrd_high=0xffffffffffffffff\0"
 
-#define CONFIG_BOOTARGS		"console=ttyAMA0 earlyprintk=pl011,"\
+#define CONFIG_BOOTARGS		"console=ttyAMA0 earlycon=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
 				"systemd.log_target=null "\
 				"androidboot.hardware=fvpbase "\
