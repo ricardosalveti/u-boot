@@ -71,6 +71,14 @@ config SEMIHOSTING
 	  the hosted environment to call out to the emulator to
 	  retrieve files from the host machine.
 
+config DONT_UPDATE_FDT
+	bool "Do not fix up fdt"
+	help
+	  u-boot fix-up device tree by overwriting some of its
+	  nodes for ARM based architecture using arch_fixup_fdt()
+	  funtion.This config will make fixing of device tree
+	  controllable,choose this option to honour original dts.
+
 config SYS_L2CACHE_OFF
 	bool "L2cache off"
 	help
