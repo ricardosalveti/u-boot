@@ -184,9 +184,7 @@
 #include <config_distro_defaults.h>
 
 /* Basic environment settings */
-#define CONFIG_BOOTCOMMAND \
-	"run distro_bootcmd; " \
-	"run bootflash; "
+#define CONFIG_BOOTCOMMAND "bootm ${kernel_addr} ${ramdisk_addr} ${fdt_addr}"
 
 #define BOOT_TARGET_DEVICES(func) \
         func(MMC, mmc, 1) \
@@ -207,10 +205,11 @@
 		"kernel_addr_r=0x80008000\0"
 #elif defined(CONFIG_VEXPRESS_EXTENDED_MEMORY_MAP)
 #define CONFIG_PLATFORM_ENV_SETTINGS \
+		"fdt_addr=0x0c000000\0" \
 		"loadaddr=0xa0008000\0" \
 		"ramdisk_addr_r=0x81000000\0" \
-		"kernel_addr=0x0c100000\0" \
-		"ramdisk_addr=0x0c800000\0" \
+		"kernel_addr=0x03000000\0" \
+		"ramdisk_addr=0x00600000\0" \
 		"maxramdisk=0x1800000\0" \
 		"pxefile_addr_r=0xa8000000\0" \
 		"scriptaddr=0xa8000000\0" \
@@ -219,17 +218,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 		CONFIG_PLATFORM_ENV_SETTINGS \
                 BOOTENV \
-		"console=ttyAMA0,38400n8\0" \
-		"dram=1024M\0" \
-		"root=/dev/sda1 rw\0" \
-		"mtd=armflash:1M@0x800000(uboot),7M@0x1000000(kernel)," \
-			"24M@0x2000000(initrd)\0" \
-		"flashargs=setenv bootargs root=${root} console=${console} " \
-			"mem=${dram} mtdparts=${mtd} mmci.fmax=190000 " \
-			"devtmpfs.mount=0  vmalloc=256M\0" \
-		"bootflash=run flashargs; " \
-			"cp ${ramdisk_addr} ${ramdisk_addr_r} ${maxramdisk}; " \
-			"bootm ${kernel_addr} ${ramdisk_addr_r}\0"
+		"bootargs=root=/dev/sda2 console=ttyAMA0,38400n8 androidboot.hardware=arm-versatileexpress-usb\0"
 
 /* FLASH and environment organization */
 #define PHYS_FLASH_SIZE			0x04000000	/* 64MB */
