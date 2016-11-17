@@ -171,7 +171,7 @@
 				"initrd_addr=0x84000000\0"	\
 				"fdtfile=board.dtb\0" \
 				"fdt_alt_name=juno\0" \
-				"fdt_addr=0x83000000\0" \
+				"fdt_addr=0x82000000\0" \
 				"fdt_high=0xffffffffffffffff\0" \
 				"initrd_high=0xffffffffffffffff\0" \
 
@@ -215,7 +215,7 @@
 				"initrd_name=ramdisk.img\0"	\
 				"initrd_addr=0x88000000\0"	\
 				"fdtfile=devtree.dtb\0"		\
-				"fdt_addr=0x83000000\0"		\
+				"fdt_addr=0x82000000\0"		\
 				"fdt_high=0xffffffffffffffff\0"	\
 				"initrd_high=0xffffffffffffffff\0"
 
@@ -237,7 +237,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 				"kernel_addr=0x80080000\0"	\
 				"initrd_addr=0x84000000\0"	\
-				"fdt_addr=0x83000000\0"		\
+				"fdt_addr=0x82000000\0"		\
 				"fdt_high=0xffffffffffffffff\0"	\
 				"initrd_high=0xffffffffffffffff\0"
 
