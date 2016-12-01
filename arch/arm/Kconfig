@@ -1066,6 +1066,12 @@ config TARGET_VEXPRESS64_BASE_FVP
 	select PL01X_SERIAL
 	select SEMIHOSTING
 
+config TARGET_VEXPRESS64_BASE_FVP_AARCH32
+	bool "Support Versatile Express ARMv8a 32-bit FVP BASE model booting from DRAM"
+	select CPU_V7A
+	select SEMIHOSTING
+	select PL01X_SERIAL
+
 config TARGET_VEXPRESS64_JUNO
 	bool "Support Versatile Express Juno Development Platform"
 	select ARM64
