@@ -14,7 +14,9 @@
 #include <dm/platdata.h>
 #include <dm/platform_data/serial_pl01x.h>
 #include "pcie.h"
+#ifdef CONFIG_ARM64
 #include <asm/armv8/mmu.h>
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -29,6 +31,7 @@ U_BOOT_DEVICE(vexpress_serials) = {
 	.platdata = &serial_platdata,
 };
 
+#ifdef CONFIG_ARM64
 static struct mm_region vexpress64_mem_map[] = {
 	{
 		.virt = 0x0UL,
@@ -50,6 +53,7 @@ static struct mm_region vexpress64_mem_map[] = {
 };
 
 struct mm_region *mem_map = vexpress64_mem_map;
+#endif
 
 /* This function gets replaced by platforms supporting PCIe.
  * The replacement function, eg. on Juno, initialises the PCIe bus.
