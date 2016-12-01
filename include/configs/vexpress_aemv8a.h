@@ -13,10 +13,21 @@
 #endif
 #endif
 
+#ifdef CONFIG_ARM64
 #define CONFIG_REMAKE_ELF
+#define HIGH_ADDR			"0xffffffffffffffff"
+#define BOOT_TYPE			"booti"
+#else
+#define HIGH_ADDR			"0xffffffff"
+#define BOOT_TYPE			"bootz"
+#define CONFIG_SYS_HZ_CLOCK		24000000
+#define CONFIG_SYS_ARCH_TIMER
+#define CONFIG_SKIP_LOWLEVEL_INIT
+#endif
 
 /* Link Definitions */
-#ifdef CONFIG_TARGET_VEXPRESS64_BASE_FVP
+#if defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP) || \
+	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_AARCH32)
 /* ATF loads u-boot here for BASE_FVP model */
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x03f00000)
 #elif CONFIG_TARGET_VEXPRESS64_JUNO
@@ -148,8 +159,8 @@
 				"fdt_name=board.dtb\0" \
 				"fdt_alt_name=juno\0" \
 				"fdt_addr=0x82000000\0" \
-				"fdt_high=0xffffffffffffffff\0" \
-				"initrd_high=0xffffffffffffffff\0" \
+				"fdt_high=" HIGH_ADDR "\0"	\
+				"initrd_high=" HIGH_ADDR "\0"
 
 /* Copy the kernel and FDT to DRAM memory and boot */
 #define CONFIG_BOOTCOMMAND	"afs load ${kernel_name} ${kernel_addr} ; " \
@@ -171,10 +182,11 @@
 				"  else setenv initrd_param -; "\
 				"fi ; " \
 				"setenv bootargs ${bootargs} ${bootargs_sky2}; "\
-				"booti ${kernel_addr} ${initrd_param} ${fdt_addr}"
+				BOOT_TYPE " ${kernel_addr} ${initrd_param} ${fdt_addr}"
 
 
-#elif CONFIG_TARGET_VEXPRESS64_BASE_FVP
+#elif defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP) || \
+	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_AARCH32)
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 				"kernel_name=Image\0"		\
 				"kernel_addr=0x80080000\0"	\
@@ -182,8 +194,8 @@
 				"initrd_addr=0x84000000\0"	\
 				"fdt_name=devtree.dtb\0"		\
 				"fdt_addr=0x82000000\0"		\
-				"fdt_high=0xffffffffffffffff\0"	\
-				"initrd_high=0xffffffffffffffff\0"
+				"fdt_high=" HIGH_ADDR "\0"	\
+				"initrd_high=" HIGH_ADDR "\0"
 
 #define CONFIG_BOOTCOMMAND	"if smhload ${fdt_name} ${fdt_addr}; then "\
 				"  if smhload ${initrd_name} ${initrd_addr} "\
@@ -193,7 +205,7 @@
                                 "      fdt addr ${fdt_addr}; fdt resize; "\
                                 "      fdt chosen ${initrd_addr} "\
                                 "      ${initrd_end}; "\
-                                "      booti ${kernel_addr} - ${fdt_addr}; "\
+				"      " BOOT_TYPE " ${kernel_addr} - ${fdt_addr}; "\
                                 "    else; " \
                                 "      exit; " \
                                 "    fi; " \
@@ -203,7 +215,7 @@
                                 "fi; " \
                                 "echo semihosting load failed, try booting "\
                                 "with contents of DRAM; " \
-                                "booti $kernel_addr $initrd_addr $fdt_addr"
+				BOOT_TYPE " $kernel_addr $initrd_addr $fdt_addr"
 
 
 #endif
