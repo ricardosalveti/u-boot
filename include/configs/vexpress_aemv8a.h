@@ -15,13 +15,19 @@
 #define CONFIG_ARMV8_SWITCH_TO_EL1
 #endif
 
-#define CONFIG_REMAKE_ELF
-
 #define CONFIG_SUPPORT_RAW_INITRD
+#ifdef CONFIG_ARM64
+#define CONFIG_REMAKE_ELF
+#else
+#define CONFIG_SYS_HZ_CLOCK		24000000
+#define CONFIG_SYS_ARCH_TIMER
+#define CONFIG_SKIP_LOWLEVEL_INIT
+#endif
 
 /* Link Definitions */
 #if defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP) || \
-	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_DRAM)
+	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_DRAM) || \
+	defined(CONFIG_TARGET_VEXPRESS_AEMV8_AARCH32)
 /* ATF loads u-boot here for BASE_FVP model */
 #define CONFIG_SYS_TEXT_BASE		0x88000000
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x03f00000)
@@ -252,6 +258,26 @@
 				"loglevel=9"
 
 #define CONFIG_BOOTCOMMAND	"booti $kernel_addr $initrd_addr $fdt_addr"
+
+
+#elif CONFIG_TARGET_VEXPRESS_AEMV8_AARCH32
+#define CONFIG_SKIP_LOWLEVEL_INIT
+#define CONFIG_EXTRA_ENV_SETTINGS	\
+				"kernel_addr=0x80080000\0"	\
+				"initrd_addr=0x84000000\0"	\
+				"fdt_addr=0x82000000\0"		\
+				"fdt_high=0xffffffff\0"	\
+				"initrd_high=0xffffffff\0"
+
+#define CONFIG_BOOTARGS		"console=ttyAMA0 earlycon=pl011,"\
+				"0x1c090000 debug user_debug=31 "\
+				"systemd.log_target=null "\
+				"androidboot.hardware=fvpbase "\
+				"root=/dev/vda2 rw "\
+				"rootwait "\
+				"loglevel=9"
+
+#define CONFIG_BOOTCOMMAND	"bootz $kernel_addr $initrd_addr $fdt_addr"
 
 
 #endif
