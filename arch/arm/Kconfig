@@ -750,6 +750,7 @@ config TARGET_VEXPRESS64_BASE_FVP
 config TARGET_VEXPRESS64_BASE_FVP_AARCH32
 	bool "Support Versatile Express ARMv8a 32-bit FVP BASE model booting from DRAM"
 	select CPU_V7
+	select SEMIHOSTING
 	help
 	  This target is derived from TARGET_VEXPRESS64_BASE_FVP and over-rides
 	  the default config to allow the user to load the images directly into
@@ -759,6 +760,13 @@ config TARGET_VEXPRESS64_BASE_FVP_AARCH32
 config TARGET_VEXPRESS64_JUNO
 	bool "Support Versatile Express Juno Development Platform"
 	select ARM64
+
+config TARGET_VEXPRESS64_JUNO_AARCH32
+	bool "Support Versatile Express Juno Development Platform in 32-bit mode"
+	select CPU_V7
+	help
+	  This target is derived from TARGET_VEXPRESS64_JUNO, except it uses an
+	  ARMv7 CPU type to support booting in Aarch32 mode.
 
 config TARGET_LS2080A_EMU
 	bool "Support ls2080a_emu"
