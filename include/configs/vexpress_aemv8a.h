@@ -33,7 +33,8 @@
 /* ATF loads u-boot here for BASE_FVP model */
 #define CONFIG_SYS_TEXT_BASE		0x88000000
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x03f00000)
-#elif CONFIG_TARGET_VEXPRESS64_JUNO
+#elif defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 #define CONFIG_SYS_TEXT_BASE		0xe0000000
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x7fff0)
 #endif
@@ -61,7 +62,8 @@
 #define V2M_KMI0			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(6))
 #define V2M_KMI1			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(7))
 
-#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+#if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 #define V2M_UART0			0x7ff80000
 #define V2M_UART1			0x7ff70000
 #else /* Not Juno */
@@ -102,7 +104,8 @@
 #ifdef CONFIG_TARGET_VEXPRESS64_BASE_FVP
 #define GICD_BASE			(0x2f000000)
 #define GICC_BASE			(0x2c000000)
-#elif CONFIG_TARGET_VEXPRESS64_JUNO
+#elif defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 #define GICD_BASE			(0x2C010000)
 #define GICC_BASE			(0x2C02f000)
 #endif
@@ -112,7 +115,8 @@
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + (8 << 20))
 
 /* Ethernet Configuration */
-#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+#if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 /* The real hardware Versatile express uses SMSC9118 */
 #define CONFIG_SMC911X			1
 #define CONFIG_SMC911X_32_BIT		1
@@ -127,7 +131,8 @@
 #define CONFIG_CONS_INDEX		0
 #define CONFIG_PL01X_SERIAL
 #define CONFIG_PL011_SERIAL
-#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+#if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 #define CONFIG_PL011_CLOCK		7273800
 #else
 #define CONFIG_PL011_CLOCK		24000000
@@ -153,7 +158,7 @@
 #define PHYS_SDRAM_1_SIZE	0x80000000 - DRAM_SEC_SIZE
 #define CONFIG_SYS_SDRAM_BASE	PHYS_SDRAM_1
 
-#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+#if defined(CONFIG_TARGET_VEXPRESS64_JUNO)
 #define CONFIG_NR_DRAM_BANKS		2
 #define PHYS_SDRAM_2			(0x880000000)
 #define PHYS_SDRAM_2_SIZE		0x180000000
@@ -166,7 +171,8 @@
 #define CONFIG_SYS_MEMTEST_END		(PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)
 
 /* Initial environment variables */
-#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+#if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 /*
  * Defines where the kernel and FDT exist in NOR flash and where it will
  * be copied into DRAM
@@ -192,6 +198,7 @@
 				"user_debug=31 "\
 				"androidboot.hardware=juno "\
 				"loglevel=9"
+
 
 /* Copy the kernel and FDT to DRAM memory and boot */
 #define CONFIG_BOOTCOMMAND	"afs load ${kernel_name} ${kernel_addr} ; " \
@@ -266,7 +273,8 @@
 #define CONFIG_CMDLINE_EDITING
 #define CONFIG_SYS_MAXARGS		64	/* max command args */
 
-#ifdef CONFIG_TARGET_VEXPRESS64_JUNO
+#if defined(CONFIG_TARGET_VEXPRESS64_JUNO) || \
+	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 #define CONFIG_SYS_FLASH_BASE		0x08000000
 /* 255 x 256KiB sectors + 4 x 64KiB sectors at the end = 259 */
 #define CONFIG_SYS_MAX_FLASH_SECT	259
