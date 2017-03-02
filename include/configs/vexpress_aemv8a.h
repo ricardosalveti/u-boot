@@ -174,7 +174,7 @@
 				"kernel_name=Image\0"		\
 				"kernel_addr=0x80080000\0"	\
 				"initrd_name=ramdisk.img\0"	\
-				"initrd_addr=0x88000000\0"	\
+				"initrd_addr=0x84000000\0"	\
 				"fdtfile=devtree.dtb\0"		\
 				"fdt_addr=0x83000000\0"		\
 				"fdt_high=0xffffffffffffffff\0"	\
