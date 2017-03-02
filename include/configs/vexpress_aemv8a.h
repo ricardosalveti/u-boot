@@ -224,13 +224,25 @@
 				"systemd.log_target=null "\
 				"loglevel=9"
 
-#define CONFIG_BOOTCOMMAND	"smhload ${kernel_name} ${kernel_addr}; " \
-				"smhload ${fdt_name} ${fdt_addr}; " \
-				"smhload ${initrd_name} ${initrd_addr} "\
-				"initrd_end; " \
-				"fdt addr ${fdt_addr}; fdt resize; " \
-				"fdt chosen ${initrd_addr} ${initrd_end}; " \
-				"booti $kernel_addr - $fdt_addr"
+#define CONFIG_BOOTCOMMAND	"if smhload ${fdt_name} ${fdt_addr}; then "\
+				"  if smhload ${initrd_name} ${initrd_addr} "\
+				"  initrd_end; then " \
+				"    if smhload ${kernel_name} "\
+				"    ${kernel_addr}; then " \
+				"      fdt addr ${fdt_addr}; fdt resize; "\
+				"      fdt chosen ${initrd_addr} "\
+				"      ${initrd_end}; "\
+				"      booti ${kernel_addr} - ${fdt_addr}; "\
+				"    else; " \
+				"      exit; " \
+				"    fi; " \
+				"  else; " \
+				"    exit; " \
+				"  fi; " \
+				"fi; " \
+				"echo semihosting load failed, try booting "\
+				"with contents of DRAM; " \
+				"booti $kernel_addr $initrd_addr $fdt_addr"
 
 
 #elif CONFIG_TARGET_VEXPRESS64_BASE_FVP_DRAM
