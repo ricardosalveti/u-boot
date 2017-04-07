@@ -222,6 +222,9 @@
 #define CONFIG_BOOTARGS		"console=ttyAMA0 earlycon=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
 				"systemd.log_target=null "\
+				"androidboot.hardware=fvpbase "\
+				"root=/dev/vda2 rw "\
+				"rootwait "\
 				"loglevel=9"
 
 #define CONFIG_BOOTCOMMAND	"if smhload ${fdt_name} ${fdt_addr}; then "\
