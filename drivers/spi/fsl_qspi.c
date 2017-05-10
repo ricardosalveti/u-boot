@@ -399,7 +399,7 @@ static inline void qspi_ahb_read(struct fsl_qspi_priv *priv, u8 *rxbuf, int len)
 
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 
 	rx_addr = (void *)(uintptr_t)(priv->cur_amba_base + priv->sf_addr);
 	/* Read out the data directly from the AHB buffer. */
@@ -430,6 +430,12 @@ static void qspi_enable_ddr_mode(struct fsl_qspi_priv *priv)
 	reg |= BIT(29);
 
 	qspi_write32(priv->flags, &regs->mcr, reg);
+
+	/* Enable the TDH to 1 for i.mx6ul and mx7d, it is reserved on other platforms */
+	reg = qspi_read32(priv->flags, &regs->flshcr);
+	reg &= ~(BIT(17));
+	reg |= BIT(16);
+	qspi_write32(priv->flags, &regs->flshcr, reg);
 }
 #endif
 
@@ -491,7 +497,7 @@ static void qspi_op_rdbank(struct fsl_qspi_priv *priv, u8 *rxbuf, u32 len)
 	mcr_reg = qspi_read32(priv->flags, &regs->mcr);
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 	qspi_write32(priv->flags, &regs->rbct, QSPI_RBCT_RXBRD_USEIPS);
 
 	qspi_write32(priv->flags, &regs->sfar, priv->cur_amba_base);
@@ -536,7 +542,7 @@ static void qspi_op_rdid(struct fsl_qspi_priv *priv, u32 *rxbuf, u32 len)
 	mcr_reg = qspi_read32(priv->flags, &regs->mcr);
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 	qspi_write32(priv->flags, &regs->rbct, QSPI_RBCT_RXBRD_USEIPS);
 
 	qspi_write32(priv->flags, &regs->sfar, priv->cur_amba_base);
@@ -582,7 +588,7 @@ static void qspi_op_read(struct fsl_qspi_priv *priv, u32 *rxbuf, u32 len)
 	mcr_reg = qspi_read32(priv->flags, &regs->mcr);
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 	qspi_write32(priv->flags, &regs->rbct, QSPI_RBCT_RXBRD_USEIPS);
 
 	to_or_from = priv->sf_addr + priv->cur_amba_base;
@@ -634,7 +640,7 @@ static void qspi_op_write(struct fsl_qspi_priv *priv, u8 *txbuf, u32 len)
 	mcr_reg = qspi_read32(priv->flags, &regs->mcr);
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 	qspi_write32(priv->flags, &regs->rbct, QSPI_RBCT_RXBRD_USEIPS);
 
 	status_reg = 0;
@@ -709,7 +715,7 @@ static void qspi_op_rdsr(struct fsl_qspi_priv *priv, void *rxbuf, u32 len)
 	mcr_reg = qspi_read32(priv->flags, &regs->mcr);
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 	qspi_write32(priv->flags, &regs->rbct, QSPI_RBCT_RXBRD_USEIPS);
 
 	qspi_write32(priv->flags, &regs->sfar, priv->cur_amba_base);
@@ -746,7 +752,7 @@ static void qspi_op_erase(struct fsl_qspi_priv *priv)
 	mcr_reg = qspi_read32(priv->flags, &regs->mcr);
 	qspi_write32(priv->flags, &regs->mcr,
 		     QSPI_MCR_CLR_RXF_MASK | QSPI_MCR_CLR_TXF_MASK |
-		     QSPI_MCR_RESERVED_MASK | QSPI_MCR_END_CFD_LE);
+		     mcr_reg);
 	qspi_write32(priv->flags, &regs->rbct, QSPI_RBCT_RXBRD_USEIPS);
 
 	to_or_from = priv->sf_addr + priv->cur_amba_base;
