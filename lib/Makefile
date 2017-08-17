@@ -17,6 +17,7 @@ obj-$(CONFIG_TIZEN) += tizen/
 obj-$(CONFIG_FIT) += libfdt/
 obj-$(CONFIG_OF_LIVE) += of_live.o
 obj-$(CONFIG_CMD_DHRYSTONE) += dhry/
+obj-$(CONFIG_OPTEE) += optee/
 
 obj-$(CONFIG_AES) += aes.o
 obj-$(CONFIG_USB_TTY) += circbuf.o
