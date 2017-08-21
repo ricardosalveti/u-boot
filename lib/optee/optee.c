@@ -5,8 +5,13 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
+#include <config.h>
 #include <common.h>
 #include <tee/optee.h>
+
+#ifndef OPTEE_TZDRAM_BASE
+#error "OPTEE_TZDRAM_BASE not defined"
+#endif
 
 int optee_verify_image(struct optee_header *hdr, unsigned long tzdram_start,
 		       unsigned long tzdram_len, unsigned long image_len)
