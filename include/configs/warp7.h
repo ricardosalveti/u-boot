@@ -142,4 +142,7 @@
 #define CONFIG_USBNET_HOST_ADDR		"de:ad:be:af:00:00"
 #define CONFIG_USBNET_DEV_ADDR		"de:ad:be:af:00:01"
 
+/* Define an OPTEE base address */
+#define OPTEE_TZDRAM_BASE	(CONFIG_SYS_SDRAM_BASE + SZ_512M -\
+				 CONFIG_OPTEE_TZDRAM_SIZE)
 #endif
