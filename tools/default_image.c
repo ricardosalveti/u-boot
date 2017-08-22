@@ -18,6 +18,7 @@
 #include "mkimage.h"
 
 #include <image.h>
+#include <tee/optee.h>
 #include <u-boot/crc.h>
 
 static image_header_t header;
@@ -25,7 +26,8 @@ static image_header_t header;
 static int image_check_image_types(uint8_t type)
 {
 	if (((type > IH_TYPE_INVALID) && (type < IH_TYPE_FLATDT)) ||
-	    (type == IH_TYPE_KERNEL_NOLOAD) || (type == IH_TYPE_FIRMWARE_IVT))
+	    (type == IH_TYPE_KERNEL_NOLOAD) || (type == IH_TYPE_FIRMWARE_IVT) ||
+	    (type == IH_TYPE_OPTEE))
 		return EXIT_SUCCESS;
 	else
 		return EXIT_FAILURE;
@@ -90,6 +92,8 @@ static void image_set_header(void *ptr, struct stat *sbuf, int ifd,
 	uint32_t checksum;
 	time_t time;
 	uint32_t imagesize;
+	uint32_t ep;
+	uint32_t addr;
 
 	image_header_t * hdr = (image_header_t *)ptr;
 
@@ -99,18 +103,27 @@ static void image_set_header(void *ptr, struct stat *sbuf, int ifd,
 			sbuf->st_size - sizeof(image_header_t));
 
 	time = imagetool_get_source_date(params, sbuf->st_mtime);
-	if (params->type == IH_TYPE_FIRMWARE_IVT)
+	ep = params->ep;
+	addr = params->addr;
+	imagesize = sbuf->st_size - sizeof(image_header_t);
+
+	switch (params->type) {
+	case IH_TYPE_FIRMWARE_IVT:
 		/* Add size of CSF minus IVT */
 		imagesize = sbuf->st_size - sizeof(image_header_t) + 0x1FE0;
-	else
-		imagesize = sbuf->st_size - sizeof(image_header_t);
+		break;
+	case IH_TYPE_OPTEE:
+		addr = optee_image_get_load_addr(hdr);
+		ep = optee_image_get_entry_point(hdr);
+		break;
+	}
 
 	/* Build new header */
 	image_set_magic(hdr, IH_MAGIC);
 	image_set_time(hdr, time);
 	image_set_size(hdr, imagesize);
-	image_set_load(hdr, params->addr);
-	image_set_ep(hdr, params->ep);
+	image_set_load(hdr, addr);
+	image_set_ep(hdr, ep);
 	image_set_dcrc(hdr, checksum);
 	image_set_os(hdr, params->os);
 	image_set_arch(hdr, params->arch);
