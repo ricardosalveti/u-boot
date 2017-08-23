@@ -56,10 +56,12 @@ int optee_verify_bootm_image(unsigned long image_addr,
 
 	return ret;
 error:
-	printf("OPTEE verification error tzdram 0x%08lx-0x%08lx "
-	       "header 0x%08x-0x%08x size=0x%08lx arch=0x%08x"
-	       "uimage params 0x%08lx-0x%08lx\n",
-	       tzdram_start, tzdram_start + tzdram_len, hdr->init_load_addr_lo,
+	printf("OPTEE verification error:"
+	       "\n\thdr=%p image=0x%08lx magic=0x%08x tzdram 0x%08lx-0x%08lx "
+	       "\n\theader lo=0x%08x hi=0x%08x size=0x%08lx arch=0x%08x"
+	       "\n\tuimage params 0x%08lx-0x%08lx\n",
+	       hdr, image_addr, hdr->magic, tzdram_start,
+	       tzdram_start + tzdram_len, hdr->init_load_addr_lo,
 	       hdr->init_load_addr_hi, image_len, hdr->arch, image_load_addr,
 	       image_load_addr + image_len);
 
