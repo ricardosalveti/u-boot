@@ -19,6 +19,7 @@
 #include <lzma/LzmaTypes.h>
 #include <lzma/LzmaDec.h>
 #include <lzma/LzmaTools.h>
+#include <tee/optee.h>
 #if defined(CONFIG_CMD_USB)
 #include <usb.h>
 #endif
@@ -201,6 +202,12 @@ static int bootm_find_os(cmd_tbl_t *cmdtp, int flag, int argc,
 	if (images.os.type == IH_TYPE_KERNEL_NOLOAD) {
 		images.os.load = images.os.image_start;
 		images.ep += images.os.load;
+	} else if (images.os.type == IH_TYPE_OPTEE) {
+		ret = optee_verify_bootm_image(images.os.image_start,
+					       images.os.load,
+					       images.os.image_len);
+		if (ret)
+			return ret;
 	}
 
 	images.os.start = map_to_sysmem(os_hdr);
@@ -275,7 +282,8 @@ static int bootm_find_other(cmd_tbl_t *cmdtp, int flag, int argc,
 {
 	if (((images.os.type == IH_TYPE_KERNEL) ||
 	     (images.os.type == IH_TYPE_KERNEL_NOLOAD) ||
-	     (images.os.type == IH_TYPE_MULTI)) &&
+	     (images.os.type == IH_TYPE_MULTI) ||
+	     (images.os.type == IH_TYPE_OPTEE)) &&
 	    (images.os.os == IH_OS_LINUX ||
 		 images.os.os == IH_OS_VXWORKS))
 		return bootm_find_images(flag, argc, argv);
@@ -830,6 +838,7 @@ static const void *boot_get_kernel(cmd_tbl_t *cmdtp, int flag, int argc,
 		switch (image_get_type(hdr)) {
 		case IH_TYPE_KERNEL:
 		case IH_TYPE_KERNEL_NOLOAD:
+		case IH_TYPE_OPTEE:
 			*os_data = image_get_data(hdr);
 			*os_len = image_get_data_size(hdr);
 			break;
