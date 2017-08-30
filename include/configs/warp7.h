@@ -69,6 +69,12 @@
 		"else " \
 			"bootz; " \
 		"fi;\0" \
+	"mmcbootsec=echo Booting secure OPTEE OS from mmc ...; " \
+		"run finduuid; " \
+		"run mmcargs; " \
+		"run loadfdt; " \
+		"run loadoptee; "\
+		"bootm ${optee_addr} - ${fdt_addr};" \
 
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev};" \
