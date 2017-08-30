@@ -88,6 +88,20 @@
 		   "fi; " \
 	   "fi"
 
+/* Set OPTEE specific boot parameters */
+#if defined(CONFIG_OPTEE)
+
+#undef CONFIG_BOOTCOMMAND
+#define CONFIG_BOOTCOMMAND \
+	   "mmc dev ${mmcdev};" \
+	   "mmc dev ${mmcdev}; if mmc rescan; then " \
+		   "if run loadimage; then " \
+			   "run mmcbootsec; " \
+		   "fi; " \
+	   "fi"
+
+#endif /* CONFIG_OPTEE */
+
 #define CONFIG_SYS_MEMTEST_START	0x80000000
 #define CONFIG_SYS_MEMTEST_END		(CONFIG_SYS_MEMTEST_START + 0x20000000)
 
