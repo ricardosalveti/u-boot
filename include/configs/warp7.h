@@ -52,6 +52,7 @@
 		"source\0" \
 	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
 	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+	"loadoptee=fatload mmc ${mmcdev}:${mmcpart} ${optee_addr} ${optee_file}\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run finduuid; " \
 		"run mmcargs; " \
