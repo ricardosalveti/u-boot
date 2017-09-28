@@ -229,6 +229,31 @@ uint8_t hab_engines[16] = {
 	-1
 };
 
+static int ivt_header_error(const char *err_str, struct ivt_header *ivt_hdr)
+{
+	printf("%s magic=0x%x length=0x%02x version=0x%x\n", err_str,
+	       ivt_hdr->magic, ivt_hdr->length, ivt_hdr->version);
+
+	return 1;
+}
+
+static int verify_ivt_header(struct ivt_header *ivt_hdr)
+{
+	int result = 0;
+
+	if (ivt_hdr->magic != IVT_HEADER_MAGIC)
+		result = ivt_header_error("bad magic", ivt_hdr);
+
+	if (be16_to_cpu(ivt_hdr->length) != IVT_TOTAL_LENGTH)
+		result = ivt_header_error("bad length", ivt_hdr);
+
+	if (ivt_hdr->version != IVT_HEADER_V1 &&
+	    ivt_hdr->version != IVT_HEADER_V2)
+		result = ivt_header_error("bad version", ivt_hdr);
+
+	return result;
+}
+
 static inline uint8_t get_idx(uint8_t *list, uint8_t tgt)
 {
 	uint8_t idx = 0;
@@ -394,6 +419,8 @@ int authenticate_image(uint32_t ddr_start, uint32_t image_size,
 	hab_rvt_authenticate_image_t *hab_rvt_authenticate_image;
 	hab_rvt_entry_t *hab_rvt_entry;
 	hab_rvt_exit_t *hab_rvt_exit;
+	struct ivt *ivt;
+	struct ivt_header *ivt_hdr;
 
 	hab_rvt_authenticate_image = hab_rvt_authenticate_image_p;
 	hab_rvt_entry = hab_rvt_entry_p;
@@ -416,6 +443,13 @@ int authenticate_image(uint32_t ddr_start, uint32_t image_size,
 
 	/* Calculate IVT address header */
 	ivt_addr = ddr_start + ivt_offset;
+	ivt = (struct ivt *)ivt_addr;
+	ivt_hdr = &ivt->hdr;
+
+	/* Verify IVT header bugging out on error */
+	if (verify_ivt_header(ivt_hdr))
+		goto hab_caam_clock_disable;
+
 	start = ddr_start;
 	bytes = image_size;
 #ifdef DEBUG
