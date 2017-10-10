@@ -170,4 +170,8 @@
 /* Define an OPTEE base address */
 #define OPTEE_TZDRAM_BASE	(CONFIG_SYS_SDRAM_BASE + SZ_512M -\
 				 CONFIG_OPTEE_TZDRAM_SIZE)
+
+/* Environment variable name to represent HAB enable state */
+#define HAB_ENABLED_ENVNAME		"hab_enabled"
+
 #endif

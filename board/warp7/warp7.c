@@ -10,6 +10,7 @@
 #include <asm/arch/mx7-pins.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/gpio.h>
+#include <asm/mach-imx/hab.h>
 #include <asm/mach-imx/iomux-v3.h>
 #include <asm/mach-imx/mxc_i2c.h>
 #include <asm/io.h>
@@ -216,6 +217,9 @@ int board_late_init(void)
 	 * since we use PMIC_PWRON to reset the board.
 	 */
 	clrsetbits_le16(&wdog->wcr, 0, 0x10);
+
+	/* Determine HAB state */
+	setenv_ulong(HAB_ENABLED_ENVNAME, imx_hab_is_enabled());
 
 	return 0;
 }
