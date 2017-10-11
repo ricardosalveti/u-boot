@@ -42,6 +42,7 @@
 	"fdt_file_signed=imx7s-warp.dtb.imx-signed\0" \
 	"fdt_addr=" __stringify(CONFIG_SYS_FDT_ADDR)"\0" \
 	"optee_file=uTee.optee\0" \
+	"optee_file_signed=uTee.optee.imx-signed\0" \
 	"optee_addr=" __stringify(CONFIG_OPTEE_LOAD_ADDR)"\0" \
 	"boot_fdt=try\0" \
 	"ip_dyn=yes\0" \
