@@ -33,6 +33,7 @@
 	CONFIG_DFU_ENV_SETTINGS \
 	"script=boot.scr\0" \
 	"image=zImage\0" \
+	"image_signed=zImage.imx-signed\0" \
 	"console=ttymxc0\0" \
 	"ethact=usb_ether\0" \
 	"fdt_high=0xffffffff\0" \
