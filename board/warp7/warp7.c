@@ -24,6 +24,11 @@
 #include <power/pfuze3000_pmic.h>
 #include "../freescale/common/pfuze.h"
 
+#ifndef CONFIG_SPL_BUILD
+#include <console.h>
+#include <fuse.h>
+#endif /* CONFIG_SPL_BUILD */
+
 DECLARE_GLOBAL_DATA_PTR;
 
 #define UART_PAD_CTRL  (PAD_CTL_DSE_3P3V_49OHM | PAD_CTL_PUS_PU100KOHM | \
@@ -214,3 +219,69 @@ int board_late_init(void)
 
 	return 0;
 }
+
+#ifndef CONFIG_SPL_BUILD
+/*
+ * This function will calculate an IVT address and set env->hab_load_address to
+ * that value based on subtracting the size of the IVT space from the passed
+ * address.
+ *
+ * Using u-boot to produce an IVT prefixed image
+ *
+ * mkimage -n board/warp7/imximage.cfg.cfgtmp -T imximage -e 0x87800000 -d u-boot.bin u-boot.imx
+ *
+ * and following NXP's guide to signing an IVT prefixed image will result in a
+ * CSF footer being added i.e.
+ *
+ * ./cst --i u-boot_sign.csf --o u-boot_sign.csf-csf-header
+ *
+ * cat u-boot.imx u-boot_sign.csf-csf-header > u-boot.imx-signed
+ *
+ * Results in an image that looks like
+ * IVT | BINARY | CSF
+ *
+ * This routine takes the address of the binary and sets the required IVT
+ * address for a binary at that address to env->hab_load_address
+ *
+ * Since IVT, Binary and CSF can come in any order there is no requirement for
+ * a particular image layout and therefore it is up to the BSP designer to
+ * arrange the IVT, Binary and CSF in a way that works best for his or her
+ * project.
+ *
+ * The image format chosen for WaRP7 is IVT | BINARY | CSF since that is the
+ * least path of resistence given how the tools operate.
+ */
+#define IVT_PAD_SIZE 0xC00
+static int set_ivt_load_address_env(ulong addr)
+{
+	setenv_hex("hab_load_address", addr - IVT_PAD_SIZE);
+
+	return CMD_RET_SUCCESS;
+}
+
+static int do_warp7_calculate_ivt_address(cmd_tbl_t *cmdtp, int flag, int argc,
+					  char * const argv[])
+{
+	ulong	addr;
+	int	rcode = 0;
+
+	if (argc < 2)
+		return CMD_RET_USAGE;
+
+	if (!imx_hab_is_enabled())
+		return CMD_RET_FAILURE;
+
+	addr = simple_strtoul(argv[1], NULL, 16);
+	rcode = set_ivt_load_address_env(addr);
+
+	return rcode;
+}
+
+U_BOOT_CMD(
+		warp7_get_ivt_addr, CONFIG_SYS_MAXARGS, 2,
+		do_warp7_calculate_ivt_address,
+		"calculate load address of IVT binary store in $warp7_hab_load_address",
+		"addr - non-IVT binary load address"
+	  );
+
+#endif /* ifndef CONFIG_SPL_BUILD */
