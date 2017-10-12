@@ -55,7 +55,23 @@
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
 		"source\0" \
-	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
+	"loadimage_hab_pre="\
+			"if test ${hab_enabled} -eq 1; then " \
+				"warp7_get_ivt_addr ${loadaddr}; " \
+				"setenv image ${image_signed}; " \
+			"else "\
+				"setenv hab_load_address ${loadaddr}; "\
+			"fi;\0" \
+	"loadimage_hab_post="\
+			"if test ${hab_enabled} -eq 1; then " \
+				"hab_auth_img ${hab_load_address} ${filesize} 0; "\
+				"if test $? -ne 0; then " \
+					"echo 'TODO HAB verification fail'; " \
+				"fi; " \
+			"fi;\0" \
+	"loadimage=run loadimage_hab_pre; " \
+			"fatload mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${image}; " \
+		  "run loadimage_hab_post; \0" \
 	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
 	"loadoptee=fatload mmc ${mmcdev}:${mmcpart} ${optee_addr} ${optee_file}\0" \
 	"mmcboot=echo Booting from mmc ...; " \
