@@ -135,9 +135,8 @@
 		   "if run loadbootscript; then " \
 			   "run bootscript; " \
 		   "else " \
-			   "if run loadimage; then " \
-				   "run mmcboot; " \
-			   "fi; " \
+			   "run loadimage;" \
+			   "run mmcboot; " \
 		   "fi; " \
 	   "fi"
 
@@ -148,9 +147,8 @@
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev};" \
 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
-		   "if run loadimage; then " \
-			   "run mmcbootsec; " \
-		   "fi; " \
+		   "run loadimage;" \
+		   "run mmcbootsec; " \
 	   "fi"
 
 #endif /* CONFIG_OPTEE */
