@@ -66,7 +66,7 @@
 			"if test ${hab_enabled} -eq 1; then " \
 				"hab_auth_img ${hab_load_address} ${filesize} 0; "\
 				"if test $? -ne 0; then " \
-					"echo 'TODO HAB verification fail'; " \
+					"run warp7_failsafe;" \
 				"fi; " \
 			"fi;\0" \
 	"loadimage=run loadimage_hab_pre; " \
@@ -83,7 +83,7 @@
 			"if test ${hab_enabled} -eq 1; then " \
 				"hab_auth_img ${hab_load_address} ${filesize} 0; "\
 				"if test $? -ne 0; then " \
-					"echo 'TODO HAB verification fail'; " \
+					"run warp7_failsafe;" \
 				"fi; " \
 			"fi;\0" \
 	"loadfdt=run loadfdt_hab_pre; " \
@@ -100,7 +100,7 @@
 			"if test ${hab_enabled} -eq 1; then " \
 				"hab_auth_img ${hab_load_address} ${filesize} 0; "\
 				"if test $? -ne 0; then " \
-					"echo 'TODO HAB verification fail'; " \
+					"run warp7_failsafe;" \
 				"fi; " \
 			"fi;\0" \
 	"loadoptee=run loadoptee_hab_pre; "\
@@ -127,8 +127,8 @@
 		"run mmcargs; " \
 		"run loadfdt; " \
 		"run loadoptee; "\
-		"bootm ${optee_addr} - ${fdt_addr};" \
-
+		"bootm ${optee_addr} - ${fdt_addr};\0"\
+		"warp7_failsafe=echo 'HAB verification fail'; hab_failsafe;\0"
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev};" \
 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
