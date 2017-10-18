@@ -466,10 +466,25 @@ int authenticate_image(uint32_t ddr_start, uint32_t image_size,
 		}
 	}
 
+	/*
+	 * FIXME: Need to disable dcache on MX7 is there an IROM
+	 * register like on MX6 above ? Certain images called in certain
+	 * orders with the dcache switched on will cause
+	 * authenticate_image() to lockup. Switching off the dcache
+	 * resolves the issue.
+	 * https://community.nxp.com/message/953261
+	 */
+	if (is_soc_type(MXC_SOC_MX7))
+		dcache_disable();
+
 	load_addr = (uint32_t)hab_rvt_authenticate_image(
 			HAB_CID_UBOOT,
 			ivt_offset, (void **)&start,
 			(size_t *)&bytes, NULL);
+
+	if (is_soc_type(MXC_SOC_MX7))
+		dcache_enable();
+
 	if (hab_rvt_exit() != HAB_SUCCESS) {
 		puts("hab exit function fail\n");
 		load_addr = 0;
