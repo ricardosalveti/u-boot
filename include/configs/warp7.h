@@ -52,6 +52,21 @@
 	"finduuid=part uuid mmc 0:2 uuid\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait rw\0" \
+	"loadbootscript_hab=" \
+		"if test ${hab_enabled} -eq 1; then " \
+			"warp7_get_ivt_addr ${loadaddr}; " \
+			"setenv script ${script_signed}; " \
+		"else "\
+			"setenv hab_load_address ${loadaddr}; "\
+		"fi;" \
+		"setenv filesize 0; "\
+		"fatload mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${script};" \
+		"if test ${hab_enabled} -eq 1; then " \
+			"hab_auth_img ${hab_load_address} ${filesize} 0; "\
+			"if test $? -ne 0; then " \
+				"run warp7_failsafe;" \
+			"fi; " \
+		"fi;\0" \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
@@ -148,8 +163,12 @@
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev};" \
 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
-		   "run loadimage;" \
-		   "run mmcbootsec; " \
+		"run loadbootscript_hab;" \
+		"if test ${filesize} -ne 0; then "\
+			"run bootscript; " \
+		"fi; "\
+		"run loadimage;" \
+		"run mmcbootsec; " \
 	   "fi"
 
 #endif /* CONFIG_OPTEE */
