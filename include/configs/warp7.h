@@ -29,6 +29,12 @@
 #define CONFIG_DFU_ENV_SETTINGS \
 	"dfu_alt_info=boot raw 0x2 0x400 mmcpart 1\0" \
 
+#if defined(CONFIG_LOADCMD_EXT4)
+#define LOADCMD "ext4load"
+#else
+#define LOADCMD "fatload"
+#endif
+
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_DFU_ENV_SETTINGS \
 	"script=boot.scr\0" \
@@ -52,6 +58,7 @@
 	"finduuid=part uuid mmc 0:2 uuid\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait rw\0" \
+	"loadcmd=" LOADCMD "\0" \
 	"loadbootscript_hab=" \
 		"if test ${hab_enabled} -eq 1; then " \
 			"warp7_get_ivt_addr ${loadaddr}; " \
@@ -60,7 +67,7 @@
 			"setenv hab_load_address ${loadaddr}; "\
 		"fi;" \
 		"setenv filesize 0; "\
-		"fatload mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${script};" \
+		"${loadcmd} mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${script};" \
 		"if test ${hab_enabled} -eq 1; then " \
 			"hab_auth_img ${hab_load_address} ${filesize} 0; "\
 			"if test $? -ne 0; then " \
@@ -68,7 +75,7 @@
 			"fi; " \
 		"fi;\0" \
 	"loadbootscript=" \
-		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
+		"${loadcmd} mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
 		"source\0" \
 	"loadimage_hab_pre="\
@@ -86,7 +93,7 @@
 				"fi; " \
 			"fi;\0" \
 	"loadimage=run loadimage_hab_pre; " \
-			"fatload mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${image}; " \
+			"${loadcmd} mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${image}; " \
 		  "run loadimage_hab_post; \0" \
 	"loadfdt_hab_pre="\
 			"if test ${hab_enabled} -eq 1; then " \
@@ -103,7 +110,7 @@
 				"fi; " \
 			"fi;\0" \
 	"loadfdt=run loadfdt_hab_pre; " \
-		 "fatload mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${fdt_file}; " \
+		 "${loadcmd} mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${fdt_file}; " \
 		 "run loadfdt_hab_post;\0" \
 	"loadoptee_hab_pre="\
 			"if test ${hab_enabled} -eq 1; then " \
@@ -120,7 +127,7 @@
 				"fi; " \
 			"fi;\0" \
 	"loadoptee=run loadoptee_hab_pre; "\
-		   "fatload mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${optee_file}; " \
+		   "${loadcmd} mmc ${mmcdev}:${mmcpart} ${hab_load_address} ${optee_file}; " \
 		   "run loadoptee_hab_post;\0" \
 	"mmcboot=echo Booting from mmc ...; " \
 		"run finduuid; " \

@@ -6,4 +6,9 @@ config SYS_BOARD
 config SYS_CONFIG_NAME
 	default "warp7"
 
+config LOADCMD_EXT4
+	bool "ext4load"
+	help
+	  Change load command from fatload to ext4load by default.
+
 endif
