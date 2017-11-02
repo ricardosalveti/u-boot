@@ -38,6 +38,9 @@
 /* uTee.optee lives here */
 #define LIBPATH "/lib/firmware/"
 
+/* Default partition */
+#define UUID "0:1"
+
 #else
 #define LOADCMD "fatload"
 
@@ -46,6 +49,9 @@
 
 /* No path prefix when loading from FAT */
 #define LIBPATH ""
+
+/* Default partition */
+#define UUID "0:2"
 #endif
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
@@ -68,7 +74,8 @@
 	"ip_dyn=yes\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
-	"finduuid=part uuid mmc 0:2 uuid\0" \
+	"uuidpart=" UUID "\0"\
+	"finduuid=part uuid mmc ${uuidpart} uuid\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
 		"root=PARTUUID=${uuid} rootwait rw\0" \
 	"loadcmd=" LOADCMD "\0" \
