@@ -31,25 +31,38 @@
 
 #if defined(CONFIG_LOADCMD_EXT4)
 #define LOADCMD "ext4load"
+
+/* boot.scr, kernel and DTB live here */
+#define BOOTPATH "/boot/"
+
+/* uTee.optee lives here */
+#define LIBPATH "/lib/firmware/"
+
 #else
 #define LOADCMD "fatload"
+
+/* No path prefix when loading from FAT */
+#define BOOTPATH ""
+
+/* No path prefix when loading from FAT */
+#define LIBPATH ""
 #endif
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_DFU_ENV_SETTINGS \
-	"script=boot.scr\0" \
-	"script_signed=boot.scr.imx-signed\0" \
-	"image=zImage\0" \
-	"image_signed=zImage.imx-signed\0" \
+	"script=" BOOTPATH "boot.scr\0" \
+	"script_signed=" BOOTPATH "boot.scr.imx-signed\0" \
+	"image=" BOOTPATH "zImage\0" \
+	"image_signed=" BOOTPATH "zImage.imx-signed\0" \
 	"console=ttymxc0\0" \
 	"ethact=usb_ether\0" \
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
-	"fdt_file=imx7s-warp.dtb\0" \
-	"fdt_file_signed=imx7s-warp.dtb.imx-signed\0" \
+	"fdt_file=" BOOTPATH "imx7s-warp.dtb\0" \
+	"fdt_file_signed=" BOOTPATH "imx7s-warp.dtb.imx-signed\0" \
 	"fdt_addr=" __stringify(CONFIG_SYS_FDT_ADDR)"\0" \
-	"optee_file=uTee.optee\0" \
-	"optee_file_signed=uTee.optee.imx-signed\0" \
+	"optee_file=" LIBPATH "uTee.optee\0" \
+	"optee_file_signed=" LIBPATH "uTee.optee.imx-signed\0" \
 	"optee_addr=" __stringify(CONFIG_OPTEE_LOAD_ADDR)"\0" \
 	"boot_fdt=try\0" \
 	"ip_dyn=yes\0" \
