@@ -101,6 +101,58 @@ static struct fsl_esdhc_cfg usdhc_cfg[1] = {
 	{USDHC3_BASE_ADDR},
 };
 
+/*
+ * OCOTP_TESTER
+ * i.MX 7Solo Applications Processor Reference Manual, Rev. 0.1, 08/2016
+ * OCOTP_TESTER describes a unique ID based on silicon wafer
+ * and die X/Y position
+ *
+ * OCOTOP_TESTER offset 0x410
+ * 31:0 fuse 0
+ * FSL-wide unique, encoded LOT ID STD II/SJC CHALLENGE/ Unique ID
+ *
+ * OCOTP_TESTER1 offset 0x420
+ * 31:24 fuse 1
+ * The X-coordinate of the die location on the wafer/SJC CHALLENGE/ Unique ID
+ * 23:16 fuse 1
+ * The Y-coordinate of the die location on the wafer/SJC CHALLENGE/ Unique ID
+ * 15:11 fuse 1
+ * The wafer number of the wafer on which the device was fabricated/SJC
+ * CHALLENGE/ Unique ID
+ * 10:0 fuse 1
+ * FSL-wide unique, encoded LOT ID STD II/SJC CHALLENGE/ Unique ID
+ */
+#define WARP7_USB_SERIALID_BANK 0
+#define WARP7_USB_SERIALID_MSWORD 1
+#define WARP7_USB_SERIALID_LSWORD 2
+
+static int warp7_get_serialid(u64 *id)
+{
+	u32 val;
+	int ret;
+
+	if (!id)
+		return -EINVAL;
+
+	/* Read first word */
+	ret = fuse_read(WARP7_USB_SERIALID_BANK, WARP7_USB_SERIALID_MSWORD, &val);
+	if (ret)
+		goto done;
+
+	*id = val;
+	*id <<= 32;
+
+	/* Read second word */
+	ret = fuse_read(WARP7_USB_SERIALID_BANK, WARP7_USB_SERIALID_LSWORD, &val);
+	if (ret)
+		goto done;
+
+	*id |= val;
+
+done:
+	return ret;
+}
+
 int board_mmc_getcd(struct mmc *mmc)
 {
 		/* Assume uSDHC3 emmc is always present */
