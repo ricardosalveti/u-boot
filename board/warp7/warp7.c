@@ -259,6 +259,9 @@ int board_usb_phy_mode(int port)
 int board_late_init(void)
 {
 	struct wdog_regs *wdog = (struct wdog_regs *)WDOG1_BASE_ADDR;
+	u64 serial_id = 0;
+	char serial_string[0x20];
+	int ret;
 
 	imx_iomux_v3_setup_multiple_pads(wdog_pads, ARRAY_SIZE(wdog_pads));
 
@@ -272,6 +275,14 @@ int board_late_init(void)
 
 	/* Determine HAB state */
 	setenv_ulong(HAB_ENABLED_ENVNAME, imx_hab_is_enabled());
+
+	/* Set serial# standard environment variable based on OTP settings */
+	ret = warp7_get_serialid(&serial_id);
+	if (ret)
+		printf("error %d reading from serial# OTP fuse\n", ret);
+
+	snprintf(serial_string, sizeof(serial_string), "WaRP7-0x%016llx", serial_id);
+	setenv("serial#", serial_string);
 
 	return 0;
 }
