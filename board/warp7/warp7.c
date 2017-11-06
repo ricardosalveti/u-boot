@@ -23,6 +23,7 @@
 #include <netdev.h>
 #include <power/pmic.h>
 #include <power/pfuze3000_pmic.h>
+#include <g_dnl.h>
 #include "../freescale/common/pfuze.h"
 
 #ifndef CONFIG_SPL_BUILD
@@ -352,3 +353,18 @@ U_BOOT_CMD(
 	  );
 
 #endif /* ifndef CONFIG_SPL_BUILD */
+
+#ifdef CONFIG_USB_GADGET
+
+/* Over-ride weak symbol to set device descriptor iSerial field */
+int g_dnl_bind_fixup(struct usb_device_descriptor *dev, const char *name)
+{
+	char *str = getenv("serial#");
+
+	if (str)
+		g_dnl_set_serialnumber(str);
+
+	return 0;
+}
+
+#endif /* ifdef CONFIG_USB_GADGET */
