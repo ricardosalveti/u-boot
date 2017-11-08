@@ -196,7 +196,8 @@
 				"systemd.log_target=null "\
 				"user_debug=31 "\
 				"androidboot.hardware=juno "\
-				"loglevel=9"
+				"loglevel=9 "\
+				"androidboot.selinux=permissive"
 
 
 /* Copy the kernel and FDT to DRAM memory and boot */
