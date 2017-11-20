@@ -290,10 +290,42 @@ static const struct musb_platform_ops sunxi_musb_ops = {
 	.disable	= sunxi_musb_disable,
 };
 
+#if defined(CONFIG_MACH_SUN8I_H3)
+static struct musb_fifo_cfg sunxi_musb_fifo_config[] = {
+	{ .hw_ep_num = 1, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 1, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 2, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 2, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 3, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 3, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 4, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 4, .style = FIFO_RX, .maxpacket = 512, },
+};
+#else
+static struct musb_fifo_cfg sunxi_musb_fifo_config[] = {
+	{ .hw_ep_num = 1, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 1, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 2, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 2, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 3, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 3, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 4, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 4, .style = FIFO_RX, .maxpacket = 512, },
+	{ .hw_ep_num = 5, .style = FIFO_TX, .maxpacket = 512, },
+	{ .hw_ep_num = 5, .style = FIFO_RX, .maxpacket = 512, },
+};
+#endif
+
 static struct musb_hdrc_config musb_config = {
+	.fifo_cfg	= sunxi_musb_fifo_config,
+	.fifo_cfg_size	= ARRAY_SIZE(sunxi_musb_fifo_config),
 	.multipoint     = 1,
 	.dyn_fifo       = 1,
+#if defined(CONFIG_MACH_SUN8I_H3)
 	.num_eps        = 6,
+#else
+	.num_eps        = 5,
+#endif
 	.ram_bits       = 11,
 };
 
