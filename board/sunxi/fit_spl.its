@@ -1,0 +1,40 @@
+/*
+ * Copyright (C) 2017 Linaro Ltd.
+ *
+ * Minimal dts for a SPL FIT image payload.
+ *
+ * SPDX-License-Identifier: GPL-2.0+  X11
+ */
+
+/dts-v1/;
+
+/ {
+	description = "FIT image with U-Boot proper, DTB";
+	#address-cells = <1>;
+
+	images {
+		uboot@1 {
+			description = "U-Boot";
+			data = /incbin/("../../u-boot-nodtb.bin");
+			type = "firmware";
+			arch = "arm";
+			compression = "none";
+			load = <0x4a000000>;
+		};
+		fdt@1 {
+			description = "Allwinner flat device-tree";
+			data = /incbin/("../../u-boot.dtb");
+			type = "flat_dt";
+			compression = "none";
+		};
+	};
+
+	configurations {
+		default = "conf@1";
+		conf@1 {
+			description = "sun8i-h2-plus-bananapi-m2-zero";
+			loadables = "uboot@1";
+			fdt = "fdt@1";
+		};
+	};
+};
