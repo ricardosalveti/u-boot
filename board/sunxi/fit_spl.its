@@ -20,12 +20,18 @@
 			arch = "arm";
 			compression = "none";
 			load = <0x4a000000>;
+			hash@1 {
+				algo = "sha1";
+			};
 		};
 		fdt@1 {
 			description = "Allwinner flat device-tree";
 			data = /incbin/("../../u-boot.dtb");
 			type = "flat_dt";
 			compression = "none";
+			hash@1 {
+				algo = "sha1";
+			};
 		};
 	};
 
@@ -35,6 +41,11 @@
 			description = "sun8i-h2-plus-bananapi-m2-zero";
 			loadables = "uboot@1";
 			fdt = "fdt@1";
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+				sign-images = "fdt", "loadables";
+			};
 		};
 	};
 };
