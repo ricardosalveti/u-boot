@@ -57,7 +57,7 @@
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_DFU_ENV_SETTINGS \
 	"script=boot.scr\0" \
-	"script_signed=" BOOTPATH "boot.scr.imx-signed\0" \
+	"script_signed=boot.scr.imx-signed\0" \
 	"image=" BOOTPATH "zImage\0" \
 	"image_signed=" BOOTPATH "zImage.imx-signed\0" \
 	"console=ttymxc0\0" \
