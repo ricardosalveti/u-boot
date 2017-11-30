@@ -840,6 +840,10 @@ quiet_cmd_mkfitimage = MKIMAGE $@
 cmd_mkfitimage = $(objtree)/tools/mkimage $(MKIMAGEFLAGS_$(@F)) -f $(U_BOOT_ITS) -E $@ \
 	$(if $(KBUILD_VERBOSE:1=), >$(MKIMAGEOUTPUT))
 
+quiet_cmd_mksignedfitimage = MKIMAGE $@
+cmd_mksignedfitimage = $(objtree)/tools/mkimage $(MKIMAGEFLAGS_$(@F)) -f $(U_BOOT_ITS) \
+	-k keys -K u-boot.dtb -r -E $@ $(if $(KBUILD_VERBOSE:1=), >$(MKIMAGEOUTPUT))
+
 quiet_cmd_cat = CAT     $@
 cmd_cat = cat $(filter-out $(PHONY), $^) > $@
 
@@ -1020,6 +1024,9 @@ u-boot-dtb.img u-boot.img u-boot.kwb u-boot.pbl u-boot-ivt.img: \
 
 u-boot.itb: u-boot-nodtb.bin dts/dt.dtb $(U_BOOT_ITS) FORCE
 	$(call if_changed,mkfitimage)
+
+u-boot-signed.itb: u-boot-nodtb.bin dts/dt.dtb $(U_BOOT_ITS) FORCE
+	$(call if_changed,mksignedfitimage)
 
 u-boot-spl.kwb: u-boot.img spl/u-boot-spl.bin FORCE
 	$(call if_changed,mkimage)
