@@ -267,7 +267,7 @@ u32 spl_boot_mode(const u32 boot_device)
 
 void board_init_f(ulong dummy)
 {
-	spl_init();
+	spl_early_init();
 #ifndef CONFIG_SPL_DM
 	preloader_console_init();
 #endif
