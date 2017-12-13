@@ -11,6 +11,7 @@
  */
 
 #include <common.h>
+#include <debug_uart.h>
 #include <mmc.h>
 #include <i2c.h>
 #include <serial.h>
@@ -204,6 +205,9 @@ void s_init(void)
 	clock_init();
 	timer_init();
 	gpio_init();
+#if defined CONFIG_SPL_DM && defined CONFIG_DM_SERIAL
+	debug_uart_init();
+#endif
 #ifndef CONFIG_DM_I2C
 	i2c_init_board();
 #endif
