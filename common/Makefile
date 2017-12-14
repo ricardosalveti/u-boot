@@ -145,7 +145,7 @@ obj-y += malloc_simple.o
 endif
 endif
 obj-y += image.o
-obj-$(CONFIG_ANDROID_BOOT_IMAGE) += image-android.o
+obj-$(CONFIG_$(SPL_)ANDROID_BOOT_IMAGE) += image-android.o
 obj-$(CONFIG_$(SPL_)OF_LIBFDT) += image-fdt.o
 obj-$(CONFIG_$(SPL_)FIT) += image-fit.o
 obj-$(CONFIG_FIT_EMBED) += boot_fit.o common_fit.o
@@ -154,15 +154,10 @@ obj-$(CONFIG_IO_TRACE) += iotrace.o
 obj-y += memsize.o
 obj-y += stdio.o
 
-# This option is not just y/n - it can have a numeric value
 ifdef CONFIG_FASTBOOT_FLASH
-obj-y += image-sparse.o
-ifdef CONFIG_FASTBOOT_FLASH_MMC_DEV
-obj-y += fb_mmc.o
-endif
-ifdef CONFIG_FASTBOOT_FLASH_NAND_DEV
-obj-y += fb_nand.o
-endif
+obj-$(CONFIG_$(SPL_)FASTBOOT_FLASH) += image-sparse.o
+obj-$(CONFIG_$(SPL_)FASTBOOT_FLASH_MMC) += fb_mmc.o
+obj-$(CONFIG_$(SPL_)FASTBOOT_FLASH_NAND) += fb_nand.o
 endif
 
 ifdef CONFIG_CMD_EEPROM_LAYOUT

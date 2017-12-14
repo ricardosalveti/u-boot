@@ -24,6 +24,12 @@ config ANDROID_BOOT_IMAGE
 	  This enables support for booting images which use the Android
 	  image format header.
 
+config SPL_ANDROID_BOOT_IMAGE
+	bool "Enable support for Android Boot Images within SPL"
+	help
+	  This enables support for booting images which use the Android
+	  image format header within SPL.
+
 if USB_FUNCTION_FASTBOOT
 
 config FASTBOOT_BUF_ADDR
@@ -54,6 +60,23 @@ config FASTBOOT_FLASH
 	  The fastboot protocol includes a "flash" command for writing
 	  the downloaded image to a non-volatile storage device. Define
 	  this to enable the "fastboot flash" command.
+
+config SPL_FASTBOOT_FLASH
+	bool "Enable FASTBOOT FLASH command within SPL"
+	help
+	  Support fastboot protocol to downloaded image to a non-volatile
+	  storage device within SPL.
+
+config FASTBOOT_FLASH_MMC
+	bool "Enable FASTBOOT FLASH for MMC device"
+	help
+	  Support fastboot protocol to downloaded image to a MMC device.
+
+config SPL_FASTBOOT_FLASH_MMC
+	bool "Enable FASTBOOT FLASH for MMC device within SPL"
+	help
+	  Support fastboot protocol to downloaded image to a MMC device
+	  within SPL.
 
 config FASTBOOT_FLASH_MMC_DEV
 	int "Define FASTBOOT MMC FLASH default device"
