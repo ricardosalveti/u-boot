@@ -28,6 +28,8 @@ obj-$(CONFIG_DISPLAY_BOARDINFO_LATE) += board_info.o
 obj-$(CONFIG_CMD_BOOTM) += bootm.o bootm_os.o
 obj-$(CONFIG_CMD_BOOTZ) += bootm.o bootm_os.o
 obj-$(CONFIG_CMD_BOOTI) += bootm.o bootm_os.o
+obj-$(CONFIG_CMD_LOADS) += s_record.o
+obj-$(CONFIG_CMD_LOADB) += xyzModem.o
 
 # environment
 obj-y += env_attr.o
@@ -168,7 +170,5 @@ obj-y += cli.o
 obj-$(CONFIG_FSL_DDR_INTERACTIVE) += cli_simple.o cli_readline.o
 obj-$(CONFIG_CMD_DFU) += dfu.o
 obj-y += command.o
-obj-y += s_record.o
-obj-y += xyzModem.o
 
 CFLAGS_env_embedded.o := -Wa,--no-warn -DENV_CRC=$(shell tools/envcrc 2>/dev/null)
