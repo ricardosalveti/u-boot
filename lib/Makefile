@@ -52,6 +52,9 @@ obj-$(CONFIG_SHA256) += sha256.o
 
 obj-$(CONFIG_SPL_SAVEENV) += qsort.o
 obj-$(CONFIG_$(SPL_)OF_LIBFDT) += libfdt/
+ifdef CONFIG_SPL_FIT_SIGNATURE
+obj-y += fdtdec_common.o
+endif
 ifneq ($(CONFIG_SPL_BUILD)$(CONFIG_SPL_OF_PLATDATA),yy)
 obj-$(CONFIG_$(SPL_)OF_CONTROL) += fdtdec_common.o
 obj-$(CONFIG_$(SPL_)OF_CONTROL) += fdtdec.o
