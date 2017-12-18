@@ -206,8 +206,14 @@
 #define CONFIG_SPL_LDSCRIPT "arch/arm/cpu/armv7/sunxi/u-boot-spl.lds"
 #endif
 
+#ifdef CONFIG_SPL_FIT_SIGNATURE
+/* Please make sure secure fuse is set to unlock sram size limitation! */
+#undef CONFIG_SPL_MAX_SIZE
+#define CONFIG_SPL_MAX_SIZE		0x10000		/* 64KB in secure mode */
+#define CONFIG_SPL_PAD_TO		65536		/* decimal for 'dd' */
+#else
 #define CONFIG_SPL_PAD_TO		32768		/* decimal for 'dd' */
-
+#endif
 
 /* I2C */
 #if defined CONFIG_AXP152_POWER || defined CONFIG_AXP209_POWER || \
