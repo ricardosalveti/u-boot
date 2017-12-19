@@ -48,7 +48,11 @@ int gen_check_sum(struct boot_file_head *head_p)
 #define ALIGN(x, a) __ALIGN_MASK((x), (typeof(x))(a)-1)
 #define __ALIGN_MASK(x, mask) (((x)+(mask))&~(mask))
 
+#ifdef CONFIG_SPL_FIT_SIGNATURE
+#define SUNXI_SRAM_SIZE 0x10000	/* size is larger in secure boot mode */
+#else
 #define SUNXI_SRAM_SIZE 0x8000	/* SoC with smaller size are limited before */
+#endif
 #define SRAM_LOAD_MAX_SIZE (SUNXI_SRAM_SIZE - sizeof(struct boot_file_head))
 
 /*
