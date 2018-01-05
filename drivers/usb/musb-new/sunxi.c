@@ -264,7 +264,10 @@ static int sunxi_musb_init(struct musb *musb)
 
 	setbits_le32(&ccm->ahb_gate0, 1 << AHB_GATE_OFFSET_USB0);
 #ifdef CONFIG_SUNXI_GEN_SUN6I
-	setbits_le32(&ccm->ahb_reset0_cfg, 1 << AHB_GATE_OFFSET_USB0);
+	setbits_le32(&ccm->ahb_gate0, BIT(AHB_GATE_OFFSET_OTG_DEVICE));
+	setbits_le32(&ccm->ahb_reset0_cfg,
+		     BIT(AHB_GATE_OFFSET_USB0) |
+		     BIT(AHB_GATE_OFFSET_OTG_DEVICE));
 #endif
 	sunxi_usb_phy_init(0);
 
@@ -375,6 +378,7 @@ static int musb_usb_remove(struct udevice *dev)
 	sunxi_usb_phy_exit(0);
 #ifdef CONFIG_SUNXI_GEN_SUN6I
 	clrbits_le32(&ccm->ahb_reset0_cfg, 1 << AHB_GATE_OFFSET_USB0);
+	clrbits_le32(&ccm->ahb_gate0, 1 << AHB_GATE_OFFSET_OTG_DEVICE);
 #endif
 	clrbits_le32(&ccm->ahb_gate0, 1 << AHB_GATE_OFFSET_USB0);
 
