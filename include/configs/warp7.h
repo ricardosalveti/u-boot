@@ -14,7 +14,13 @@
 
 #define PHYS_SDRAM_SIZE			SZ_512M
 
+#if (CONFIG_MXC_CONSOLE_NUM == 6)
+#define CONFIG_MXC_UART_BASE		UART6_IPS_BASE_ADDR
+#define CONSOLE				"ttymxc5"
+#else
 #define CONFIG_MXC_UART_BASE		UART1_IPS_BASE_ADDR
+#define CONSOLE				"ttymxc0"
+#endif
 
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		(35 * SZ_1M)
@@ -36,7 +42,7 @@
 	"script=boot.scr\0" \
 	"script_signed=boot.scr.imx-signed\0" \
 	"image=zImage\0" \
-	"console=ttymxc0\0" \
+	"console=" CONSOLE "\0" \
 	"ethact=usb_ether\0" \
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
