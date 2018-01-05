@@ -75,6 +75,11 @@ static iomux_v3_cfg_t const uart1_pads[] = {
 	MX7D_PAD_UART1_RX_DATA__UART1_DCE_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
 
+static iomux_v3_cfg_t const uart6_pads[] = {
+	MX7D_PAD_ECSPI1_MOSI__UART6_DTE_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
+	MX7D_PAD_ECSPI1_SCLK__UART6_DTE_TX | MUX_PAD_CTRL(UART_PAD_CTRL),
+};
+
 static iomux_v3_cfg_t const usdhc3_pads[] = {
 	MX7D_PAD_SD3_CLK__SD3_CLK     | MUX_PAD_CTRL(USDHC_PAD_CTRL),
 	MX7D_PAD_SD3_CMD__SD3_CMD     | MUX_PAD_CTRL(USDHC_PAD_CTRL),
@@ -92,6 +97,7 @@ static iomux_v3_cfg_t const usdhc3_pads[] = {
 static void setup_iomux_uart(void)
 {
 	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
+	imx_iomux_v3_setup_multiple_pads(uart6_pads, ARRAY_SIZE(uart6_pads));
 };
 
 static struct fsl_esdhc_cfg usdhc_cfg[1] = {

@@ -20,4 +20,13 @@ config SYS_FDT_ADDR
 	help
 	  The address the FDT file should be loaded to.
 
+config MXC_CONSOLE_NUM
+	int "UART used for the console"
+	default 1
+	help
+	  The UART used for the console, expressed as a 1-based integer.
+	  This is also used to set the console variable passed to the kernel.
+	  Currently, only UART1 and UART6 are supported. Specifying a value
+	  other than 6 will result in using UART1.
+
 endif
