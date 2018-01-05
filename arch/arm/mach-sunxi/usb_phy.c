@@ -19,7 +19,7 @@
 #include <errno.h>
 
 #define SUNXI_USB_PMU_IRQ_ENABLE	0x800
-#ifdef CONFIG_MACH_SUN8I_A33
+#if defined(CONFIG_MACH_SUN8I_A33) || defined(CONFIG_MACH_SUNXI_H3_H5)
 #define SUNXI_USB_CSR			0x410
 #else
 #define SUNXI_USB_CSR			0x404
@@ -150,8 +150,14 @@ __maybe_unused static void usb_phy_write(struct sunxi_usb_phy *phy, int addr,
 static void sunxi_usb_phy_config(struct sunxi_usb_phy *phy)
 {
 #if defined CONFIG_MACH_SUNXI_H3_H5
-	if (phy->id == 0)
+	if (phy->id == 0) {
+#ifdef CONFIG_USB_MUSB_GADGET
+		setbits_le32(SUNXI_USBPHY_BASE + REG_PHY_UNK_H3, 0x01);
+		writel(0, SUNXI_USB0_BASE + SUNXI_USB_CSR);
+#else
 		clrbits_le32(SUNXI_USBPHY_BASE + REG_PHY_UNK_H3, 0x01);
+#endif
+	}
 #endif
 	clrbits_le32(phy->base + REG_PMU_UNK_H3, 0x02);
 }
