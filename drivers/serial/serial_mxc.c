@@ -111,6 +111,12 @@
 #define TXTL		2  /* reset default */
 #define RXTL		1  /* reset default */
 
+#ifdef CONFIG_SERIAL_MXC_DTE_MODE
+#define MXC_DTE_MODE	true
+#else
+#define MXC_DTE_MODE	false
+#endif
+
 DECLARE_GLOBAL_DATA_PTR;
 
 struct mxc_uart {
@@ -189,7 +195,7 @@ static void mxc_serial_setbrg(void)
 	if (!gd->baudrate)
 		gd->baudrate = CONFIG_BAUDRATE;
 
-	_mxc_serial_setbrg(mxc_base, clk, gd->baudrate, false);
+	_mxc_serial_setbrg(mxc_base, clk, gd->baudrate, MXC_DTE_MODE);
 }
 
 static int mxc_serial_getc(void)
@@ -367,7 +373,7 @@ static inline void _debug_uart_init(void)
 
 	_mxc_serial_init(base);
 	_mxc_serial_setbrg(base, CONFIG_DEBUG_UART_CLOCK,
-			   CONFIG_BAUDRATE, false);
+			   CONFIG_BAUDRATE, MXC_DTE_MODE);
 }
 
 static inline void _debug_uart_putc(int ch)
