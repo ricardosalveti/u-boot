@@ -682,4 +682,11 @@ config SYS_SDMR
 	depends on MPC8XX_CONS
 	default 0
 
+config SERIAL_MXC_DTE_MODE
+	bool "Use DTE mode for the MXC UART"
+	default n
+	help
+	  This is used to set DTE mode on the serial console controlled by
+	  serial_mxc.c.
+
 endmenu
