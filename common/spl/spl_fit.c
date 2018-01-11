@@ -135,6 +135,7 @@ static int spl_load_fit_image(struct spl_load_info *info, ulong sector,
 	ulong overhead;
 	int nr_sectors;
 	int align_len = ARCH_DMA_MINALIGN - 1;
+	int ret;
 
 	offset = fdt_getprop_u32(fit, node, "data-offset");
 	if (offset == FDT_ERROR)
@@ -170,7 +171,16 @@ static int spl_load_fit_image(struct spl_load_info *info, ulong sector,
 		image_info->entry_point = fdt_getprop_u32(fit, node, "entry");
 	}
 
+#ifdef CONFIG_SPL_FIT_SIGNATURE
+	printf("## Checking hash(es) for Image %s ...\n",
+	       fit_get_name(fit, node, NULL));
+	ret = fit_image_verify_with_data(fit, node,
+					 (const void *)load_addr, length);
+	printf("\n");
+	return !ret;
+#else
 	return 0;
+#endif
 }
 
 int spl_load_simple_fit(struct spl_image_info *spl_image,
