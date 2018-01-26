@@ -206,6 +206,9 @@ ifeq ($(CONFIG_SPL_OF_CONTROL)$(CONFIG_OF_SEPARATE)$(CONFIG_SPL_OF_PLATDATA),yy)
 $(obj)/$(SPL_BIN)-dtb.bin: $(obj)/$(SPL_BIN)-nodtb.bin \
 		$(if $(CONFIG_SPL_SEPARATE_BSS),,$(obj)/$(SPL_BIN)-pad.bin) \
 		$(obj)/$(SPL_BIN).dtb FORCE
+ifeq ($(CONFIG_SPL_FIT_SIGNATURE),y)
+	$(call if_changed,fdtaddkey)
+endif
 	$(call if_changed,cat)
 
 $(obj)/$(SPL_BIN).bin: $(obj)/$(SPL_BIN)-dtb.bin FORCE
@@ -235,6 +238,11 @@ quiet_cmd_fdtgrep = FDTGREP $@
 		-n /chosen -n /config -O dtb | \
 	$(objtree)/tools/fdtgrep -r -O dtb - -o $@ \
 		$(addprefix -P ,$(subst $\",,$(CONFIG_OF_SPL_REMOVE_PROPS)))
+
+quiet_cmd_fdtaddkey = FDTADDKEY $@
+      cmd_fdtaddkey = $(objtree)/tools/mkimage $(MKIMAGEFLAGS_$(@F)) \
+		-f $(CONFIG_BOOTROM_FIT_SOURCE) -k $(srctree)/keys \
+		-K $(obj)/$(SPL_BIN).dtb -r -E $(obj)/spl-dummy.itb
 
 $(obj)/$(SPL_BIN).dtb: dts/dt.dtb $(objtree)/tools/fdtgrep FORCE
 	$(call if_changed,fdtgrep)
@@ -304,6 +312,7 @@ $(obj)/$(SPL_BIN).sfp: $(obj)/$(SPL_BIN).bin FORCE
 quiet_cmd_mksunxiboot = MKSUNXI $@
 cmd_mksunxiboot = $(objtree)/tools/mksunxiboot \
 			--default-dt $(CONFIG_DEFAULT_DEVICE_TREE) $< $@
+
 $(obj)/sunxi-spl.bin: $(obj)/$(SPL_BIN).bin FORCE
 	$(call if_changed,mksunxiboot)
 
