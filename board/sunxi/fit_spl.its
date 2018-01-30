@@ -23,6 +23,10 @@
 			hash@1 {
 				algo = "sha1";
 			};
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+			};
 		};
 		fdt@1 {
 			description = "Allwinner flat device-tree";
@@ -31,6 +35,10 @@
 			compression = "none";
 			hash@1 {
 				algo = "sha1";
+			};
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
 			};
 		};
 	};
@@ -41,11 +49,6 @@
 			description = "sun8i-h2-plus-bananapi-m2-zero";
 			loadables = "uboot@1";
 			fdt = "fdt@1";
-			signature@1 {
-				algo = "sha1,rsa2048";
-				key-name-hint = "dev";
-				sign-images = "fdt", "loadables";
-			};
 		};
 	};
 };
