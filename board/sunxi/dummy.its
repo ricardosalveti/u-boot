@@ -1,0 +1,39 @@
+/*
+ * Copyright (C) 2017 Linaro Ltd.
+ *
+ * Minimal dts for a SPL FIT image payload.
+ *
+ * SPDX-License-Identifier: GPL-2.0+  X11
+ */
+
+/dts-v1/;
+
+/ {
+	description = "FIT image with U-Boot proper, DTB";
+	#address-cells = <1>;
+
+	images {
+		uboot@1 {
+			description = "U-Boot";
+			data = /incbin/("../../u-boot.bin");
+			type = "firmware";
+			arch = "arm";
+			compression = "none";
+			hash@1 {
+				algo = "sha1";
+			};
+		};
+	};
+
+	configurations {
+		default = "conf@1";
+		conf@1 {
+			loadables = "uboot@1";
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+				sign-images = "loadables";
+			};
+		};
+	};
+};
