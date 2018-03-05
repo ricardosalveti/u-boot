@@ -32,4 +32,6 @@
  */
 #include <configs/sunxi-common.h>
 
+#define OPTEE_TZDRAM_BASE    0x5c000000
+
 #endif /* __CONFIG_H */
