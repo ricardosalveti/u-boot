@@ -16,7 +16,6 @@
 #include <axp_pmic.h>
 #include <asm/arch/clock.h>
 #include <asm/arch/cpu.h>
-#include <asm/arch/display.h>
 #include <asm/arch/dram.h>
 #include <asm/arch/gpio.h>
 #include <asm/arch/mmc.h>
@@ -34,6 +33,7 @@
 #include <net.h>
 #include <sy8106a.h>
 #include <asm/setup.h>
+#include <g_dnl.h>
 
 #if defined CONFIG_VIDEO_LCD_PANEL_I2C && !(defined CONFIG_SPL_BUILD)
 /* So that we can use pin names in Kconfig and sunxi_name_to_gpio() */
@@ -655,7 +655,7 @@ static void parse_spl_header(const uint32_t spl_addr)
  */
 static void setup_environment(const void *fdt)
 {
-	char serial_string[17] = { 0 };
+	char serial_string[34] = { 0 };
 	unsigned int sid[4];
 	uint8_t mac_addr[6];
 	char ethaddr[16];
@@ -710,7 +710,7 @@ static void setup_environment(const void *fdt)
 
 		if (!getenv("serial#")) {
 			snprintf(serial_string, sizeof(serial_string),
-				"%08x%08x", sid[0], sid[3]);
+				"bananapi-m2-zero-%08x%08x", sid[0], sid[3]);
 
 			setenv("serial#", serial_string);
 		}
@@ -787,3 +787,18 @@ int board_fit_config_name_match(const char *name)
 	}
 }
 #endif
+
+#ifdef CONFIG_USB_GADGET
+
+/* Over-ride weak symbol to set device descriptor iSerial field */
+int g_dnl_bind_fixup(struct usb_device_descriptor *dev, const char *name)
+{
+	char *str = getenv("serial#");
+
+	if (str)
+		g_dnl_set_serialnumber(str);
+
+	return 0;
+}
+
+#endif /* ifdef CONFIG_USB_GADGET */
