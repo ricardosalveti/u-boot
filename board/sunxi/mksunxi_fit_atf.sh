@@ -5,14 +5,6 @@
 #
 # usage: $0 <dt_name> [<dt_name> [<dt_name] ...]
 
-[ -z "$BL31" ] && BL31="bl31.bin"
-
-if [ ! -f $BL31 ]; then
-	echo "WARNING: BL31 file $BL31 NOT found, resulting binary is non-functional" >&2
-	echo "Please read the section on ARM Trusted Firmware (ATF) in board/sunxi/README.sunxi64" >&2
-	BL31=/dev/null
-fi
-
 cat << __HEADER_EOF
 /dts-v1/;
 
@@ -28,15 +20,13 @@ cat << __HEADER_EOF
 			arch = "arm64";
 			compression = "none";
 			load = <0x4a000000>;
-		};
-		atf@1 {
-			description = "ARM Trusted Firmware";
-			data = /incbin/("$BL31");
-			type = "firmware";
-			arch = "arm64";
-			compression = "none";
-			load = <0x44000>;
-			entry = <0x44000>;
+			hash@1 {
+				algo = "sha1";
+			};
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+			};
 		};
 __HEADER_EOF
 
@@ -49,6 +39,13 @@ do
 			data = /incbin/("$dtname");
 			type = "flat_dt";
 			compression = "none";
+			hash@1 {
+				algo = "sha1";
+			};
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+			};
 		};
 __FDT_IMAGE_EOF
 	cnt=$((cnt+1))
@@ -68,8 +65,13 @@ do
 		config@$cnt {
 			description = "$(basename $dtname .dtb)";
 			firmware = "uboot@1";
-			loadables = "atf@1";
+			loadables = "uboot@1";
 			fdt = "fdt@$cnt";
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+				sign-images = "fdt", "loadables";
+			};
 		};
 __CONF_SECTION_EOF
 	cnt=$((cnt+1))
