@@ -105,7 +105,7 @@ int print_cpuinfo(void)
 }
 #endif
 
-#if defined(MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
+#if defined(CONFIG_MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
 
 #define SIDC_PRCTL 0x40
 #define SIDC_RDKEY 0x60
@@ -163,7 +163,7 @@ int sunxi_get_sid(unsigned int *sid)
 {
 #ifdef CONFIG_AXP221_POWER
 	return axp_get_sid(sid);
-#elif defined(MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
+#elif defined(CONFIG_MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
 	/*
 	 * H3 SID controller has a bug, which makes the initial value of
 	 * SUNXI_SID_BASE at boot wrong.
@@ -191,7 +191,7 @@ int sunxi_get_sid(unsigned int *sid)
 
 int fuse_read(u32 bank, u32 word, u32 *sid)
 {
-#if defined(MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
+#if defined(CONFIG_MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
 	*sid = sun8i_efuse_read(word);
 #elif defined SUNXI_SID_BASE
 	*sid = readl((ulong)SUNXI_SID_BASE + word);
@@ -203,7 +203,7 @@ int fuse_read(u32 bank, u32 word, u32 *sid)
 
 int fuse_prog(u32 bank, u32 word, u32 val)
 {
-#if defined(MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
+#if defined(CONFIG_MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
 	return sun8i_efuse_write(word, val);
 #elif defined SUNXI_SID_BASE
 	writel(val, (ulong)SUNXI_SID_BASE + word);
