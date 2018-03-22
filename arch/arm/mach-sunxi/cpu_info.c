@@ -224,3 +224,17 @@ int fuse_override(u32 bank, u32 word, u32 val)
 	/* We do not support overriding :-( */
 	return -EINVAL;
 }
+
+#if defined(CONFIG_MACH_SUNXI_H3_H5) || defined(CONFIG_MACH_SUN50I)
+/* Skip FIT image signature verification for non-secure device */
+int board_skip_verification(void)
+{
+	int secure_boot;
+
+#define FUSE_LCJS 0xf4
+#define LCJS_SECURE_BOOT BIT(11)
+	secure_boot = sun8i_efuse_read(FUSE_LCJS);
+	secure_boot &= LCJS_SECURE_BOOT;
+	return !secure_boot;
+}
+#endif
