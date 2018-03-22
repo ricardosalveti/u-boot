@@ -72,6 +72,11 @@ struct crypto_algo crypto_algos[] = {
 
 };
 
+int __attribute__((weak)) board_skip_verification(void)
+{
+	return 0;
+}
+
 struct checksum_algo *image_get_checksum_algo(const char *full_name)
 {
 	int i;
@@ -187,6 +192,12 @@ int fit_image_check_sig(const void *fit, int noffset, const void *data,
 	struct image_region region;
 	uint8_t *fit_value;
 	int fit_value_len;
+
+	/* Skip verification if board says that */
+	if (board_skip_verification()) {
+		printf("sig check skipped");
+		return 1;
+	}
 
 	*err_msgp = NULL;
 	if (fit_image_setup_verify(&info, fit, noffset, required_keynode,
@@ -437,6 +448,12 @@ int fit_config_verify_required_sigs(const void *fit, int conf_noffset,
 {
 	int noffset;
 	int sig_node;
+
+	/* Skip verification if board says that */
+	if (board_skip_verification()) {
+		printf("sig check skipped");
+		return 1;
+	}
 
 	/* Work out what we need to verify */
 	sig_node = fdt_subnode_offset(sig_blob, 0, FIT_SIG_NODENAME);
