@@ -15,7 +15,7 @@
 	images {
 		uboot@1 {
 			description = "U-Boot";
-			data = /incbin/("../../u-boot-nodtb.bin");
+			data = /incbin/("u-boot-nodtb.bin");
 			type = "firmware";
 			arch = "arm";
 			compression = "none";
@@ -30,7 +30,7 @@
 		};
 		fdt@1 {
 			description = "Allwinner flat device-tree";
-			data = /incbin/("../../u-boot.dtb");
+			data = /incbin/("u-boot.dtb");
 			type = "flat_dt";
 			compression = "none";
 			hash@1 {
