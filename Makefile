@@ -980,7 +980,9 @@ cmd_cpp_cfg = $(CPP) -Wp,-MD,$(depfile) $(cpp_flags) $(LDPPFLAGS) -ansi \
 # Boards with more complex image requirments can provide an .its source file
 # or a generator script
 ifneq ($(CONFIG_SPL_FIT_SOURCE),"")
-U_BOOT_ITS = $(subst ",,$(CONFIG_SPL_FIT_SOURCE))
+U_BOOT_ITS := u-boot.its
+$(U_BOOT_ITS): FORCE
+	cp $(srctree)/$(CONFIG_SPL_FIT_SOURCE) $(U_BOOT_ITS)
 else
 ifneq ($(CONFIG_SPL_FIT_GENERATOR),"")
 U_BOOT_ITS := u-boot.its
