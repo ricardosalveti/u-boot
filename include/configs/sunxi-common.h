@@ -505,6 +505,22 @@ extern int soft_i2c_gpio_scl;
 #define FDTFILE CONFIG_DEFAULT_DEVICE_TREE ".dtb"
 #endif
 
+#if defined(CONFIG_FIT)
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	CONSOLE_ENV_SETTINGS \
+	MEM_LAYOUT_ENV_SETTINGS \
+	DFU_ALT_INFO_RAM \
+	"fdtfile=" FDTFILE "\0" \
+	"console=ttyS0,115200\0" \
+	SUNXI_MTDIDS_DEFAULT \
+	SUNXI_MTDPARTS_DEFAULT \
+	BOOTCMD_SUNXI_COMPAT \
+	BOOTENV \
+	"boot_a_script="                                                  \
+		"load ${devtype} ${devnum}:${distro_bootpart} "           \
+			"${scriptaddr} ${prefix}${script}; "              \
+		"source ${scriptaddr}:bootscr\0"
+#else
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONSOLE_ENV_SETTINGS \
 	MEM_LAYOUT_ENV_SETTINGS \
@@ -515,6 +531,7 @@ extern int soft_i2c_gpio_scl;
 	SUNXI_MTDPARTS_DEFAULT \
 	BOOTCMD_SUNXI_COMPAT \
 	BOOTENV
+#endif
 
 #else /* ifndef CONFIG_SPL_BUILD */
 #define CONFIG_EXTRA_ENV_SETTINGS
