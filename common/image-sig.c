@@ -195,8 +195,8 @@ int fit_image_check_sig(const void *fit, int noffset, const void *data,
 
 	/* Skip verification if board says that */
 	if (board_skip_verification()) {
-		printf("sig check skipped");
-		return 1;
+		printf("signature check skipped\n");
+		return 0;
 	}
 
 	*err_msgp = NULL;
@@ -451,8 +451,8 @@ int fit_config_verify_required_sigs(const void *fit, int conf_noffset,
 
 	/* Skip verification if board says that */
 	if (board_skip_verification()) {
-		printf("sig check skipped");
-		return 1;
+		printf("signature check skipped\n");
+		return 0;
 	}
 
 	/* Work out what we need to verify */
