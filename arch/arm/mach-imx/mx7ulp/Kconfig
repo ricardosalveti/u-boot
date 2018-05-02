@@ -4,6 +4,7 @@ config SYS_SOC
 	default "mx7ulp"
 
 config MX7ULP
+	select HAS_CAAM
 	bool
 
 choice
