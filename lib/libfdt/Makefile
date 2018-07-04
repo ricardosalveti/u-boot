@@ -16,4 +16,5 @@ obj-y += \
 	fdt_addresses.o \
 	fdt_region.o
 
+ccflags-y := -I$(srctree)/scripts/dtc/libfdt
 obj-$(CONFIG_OF_LIBFDT_OVERLAY) += fdt_overlay.o

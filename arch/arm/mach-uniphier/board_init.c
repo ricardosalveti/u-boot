@@ -7,7 +7,7 @@
  */
 
 #include <common.h>
-#include <libfdt.h>
+#include <linux/libfdt.h>
 #include <linux/io.h>
 
 #include "init.h"

@@ -9,8 +9,8 @@
 #ifndef _LIBFDT_ENV_H
 #define _LIBFDT_ENV_H
 
-#include "compiler.h"
-#include "linux/types.h"
+#include "../compiler.h"
+#include "types.h"
 
 extern struct fdt_header *working_fdt;  /* Pointer to the working fdt */
 

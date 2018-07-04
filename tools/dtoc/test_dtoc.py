@@ -104,7 +104,7 @@ class TestDtoc(unittest.TestCase):
         dtb_platdata.run_steps(['struct'], dtb_file, False, output)
         with open(output) as infile:
             lines = infile.read().splitlines()
-        self.assertEqual(['#include <stdbool.h>', '#include <libfdt.h>'], lines)
+        self.assertEqual(['#include <stdbool.h>', '#include <linux/libfdt.h>'], lines)
 
         dtb_platdata.run_steps(['platdata'], dtb_file, False, output)
         with open(output) as infile:
@@ -120,7 +120,7 @@ class TestDtoc(unittest.TestCase):
         with open(output) as infile:
             data = infile.read()
         self.assertEqual('''#include <stdbool.h>
-#include <libfdt.h>
+#include <linux/libfdt.h>
 struct dtd_sandbox_spl_test {
 \tbool\t\tboolval;
 \tunsigned char\tbytearray[3];
@@ -200,7 +200,7 @@ U_BOOT_DEVICE(spl_test4) = {
         with open(output) as infile:
             data = infile.read()
         self.assertEqual('''#include <stdbool.h>
-#include <libfdt.h>
+#include <linux/libfdt.h>
 struct dtd_source {
 \tstruct phandle_2_cell clocks[1];
 };
@@ -244,7 +244,7 @@ U_BOOT_DEVICE(phandle_source) = {
         with open(output) as infile:
             data = infile.read()
         self.assertEqual('''#include <stdbool.h>
-#include <libfdt.h>
+#include <linux/libfdt.h>
 struct dtd_compat1 {
 \tfdt32_t\t\tintval;
 };
