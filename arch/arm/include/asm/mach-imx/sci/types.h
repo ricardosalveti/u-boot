@@ -805,7 +805,9 @@
 #define SC_C_SYNC_CTRL                  55U
 #define SC_C_OFS_AUDIO_ALT              56U
 #define SC_C_DSP_BYP                    57U
-#define SC_C_LAST                       58U
+#define SC_C_PMIC_I2C                   58U
+#define SC_C_PMIC_I2C_READ_REG          59U
+#define SC_C_LAST                       60U
 
 #define SC_P_ALL        ((sc_pad_t) UINT16_MAX)   /*!< All pads */
 
