@@ -61,6 +61,8 @@ static iomux_cfg_t uart0_pads[] = {
 static iomux_cfg_t uart3_pads[] = {
 	SC_P_FLEXCAN2_RX | MUX_MODE_ALT(2) | MUX_PAD_CTRL(UART_PAD_CTRL),
 	SC_P_FLEXCAN2_TX | MUX_MODE_ALT(2) | MUX_PAD_CTRL(UART_PAD_CTRL),
+	/* Transceiver FORCEOFF# signal, mux to use pullup */
+	SC_P_QSPI0B_DQS | MUX_MODE_ALT(4) | MUX_PAD_CTRL(UART_PAD_CTRL),
 };
 
 static void setup_iomux_uart(void)
