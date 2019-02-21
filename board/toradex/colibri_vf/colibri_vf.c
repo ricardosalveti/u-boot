@@ -92,8 +92,6 @@ static struct ddrmc_cr_setting colibri_vf_cr_settings[] = {
 		   DDRMC_CR154_PAD_ZQ_HW_FOR(1), 154 },
 	{ DDRMC_CR155_PAD_ODT_BYTE1(2) | DDRMC_CR155_PAD_ODT_BYTE0(2), 155 },
 	{ DDRMC_CR158_TWR(6), 158 },
-	{ DDRMC_CR161_ODT_EN(1) | DDRMC_CR161_TODTH_RD(2) |
-		   DDRMC_CR161_TODTH_WR(2), 161 },
 	/* end marker */
 	{ 0, -1 }
 };
