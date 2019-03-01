@@ -99,11 +99,16 @@ static struct ddrmc_cr_setting colibri_vf_cr_settings[] = {
 };
 
 #define COLIBRI_VF_DDRMC_PHY_LOCK_DETECT   0x00200104
+#define COLIBRI_VF_DDRMC_PHY_PROC_PAD_ODT  0x00000000
 
 static struct ddrmc_phy_setting colibri_vf_phy_settings[] = {
 	{ COLIBRI_VF_DDRMC_PHY_LOCK_DETECT,  3 },
 	{ COLIBRI_VF_DDRMC_PHY_LOCK_DETECT,  19 },
 	{ COLIBRI_VF_DDRMC_PHY_LOCK_DETECT,  35 },
+
+	/* Processor Pad ODT settings */
+	{ COLIBRI_VF_DDRMC_PHY_PROC_PAD_ODT, 52 },
+
 	/* end marker */
 	{ 0, -1 }
 };
