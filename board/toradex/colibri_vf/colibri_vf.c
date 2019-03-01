@@ -96,6 +96,16 @@ static struct ddrmc_cr_setting colibri_vf_cr_settings[] = {
 	{ 0, -1 }
 };
 
+#define COLIBRI_VF_DDRMC_PHY_LOCK_DETECT   0x00200104
+
+static struct ddrmc_phy_setting colibri_vf_phy_settings[] = {
+	{ COLIBRI_VF_DDRMC_PHY_LOCK_DETECT,  3 },
+	{ COLIBRI_VF_DDRMC_PHY_LOCK_DETECT,  19 },
+	{ COLIBRI_VF_DDRMC_PHY_LOCK_DETECT,  35 },
+	/* end marker */
+	{ 0, -1 }
+};
+
 static const iomux_v3_cfg_t usb_pads[] = {
 	VF610_PAD_PTD4__GPIO_83,
 	VF610_PAD_PTC29__GPIO_102,
@@ -156,7 +166,7 @@ int dram_init(void)
 
 	ddrmc_setup_iomux(NULL, 0);
 
-	ddrmc_ctrl_init_ddr3(&timings, colibri_vf_cr_settings, NULL, 1, 2);
+	ddrmc_ctrl_init_ddr3(&timings, colibri_vf_cr_settings, colibri_vf_phy_settings, 1, 2);
 	gd->ram_size = get_ram_size((void *)PHYS_SDRAM, PHYS_SDRAM_SIZE);
 
 	return 0;
