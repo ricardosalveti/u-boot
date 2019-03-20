@@ -25,13 +25,14 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		reg_usb_otg1_vbus: regulator@0 {
+		reg_usbh_vbus: regulator-usbh-vbus {
 			compatible = "regulator-fixed";
-			reg = <0>;
-			regulator-name = "usb_otg1_vbus";
+			pinctrl-names = "default";
+			pinctrl-0 = <&pinctrl_usbh1_reg>;
+			regulator-name = "usbh_vbus";
 			regulator-min-microvolt = <5000000>;
 			regulator-max-microvolt = <5000000>;
-			enable-active-high;
+			gpio = <&gpio4 3 GPIO_ACTIVE_LOW>;
 		};
 	};
 
@@ -143,6 +144,25 @@
 			fsl,pins = <
 				SC_P_MIPI_DSI0_GPIO0_00_ADMA_I2C1_SCL	0x06000021
 				SC_P_MIPI_DSI0_GPIO0_01_ADMA_I2C1_SDA	0x06000021
+			>;
+		};
+
+		/*INT*/
+		pinctrl_usb3503a: usb3503a-grp {
+			fsl,pins = <
+				SC_P_MIPI_CSI0_MCLK_OUT_LSIO_GPIO3_IO04 0x00000061
+			>;
+		};
+
+		pinctrl_usbc_det: usbc-det {
+			fsl,pins = <
+				SC_P_ENET0_REFCLK_125M_25M_LSIO_GPIO5_IO09	0x06000040
+			>;
+		};
+
+		pinctrl_usbh1_reg: usbh1-reg {
+			fsl,pins = <
+				SC_P_USB_SS3_TC0_LSIO_GPIO4_IO03	0x06000040
 			>;
 		};
 
@@ -350,15 +370,16 @@
 };
 
 &usbotg1 {
-	vbus-supply = <&reg_usb_otg1_vbus>;
 	srp-disable;
 	hnp-disable;
 	adp-disable;
-	power-polarity-active-high;
 	disable-over-current;
+	dr_mode = "peripheral";
 	status = "okay";
 };
 
 &usb2 {
+	dr_mode = "host";
 	status = "okay";
+	vbus-supply = <&reg_usbh_vbus>;
 };
