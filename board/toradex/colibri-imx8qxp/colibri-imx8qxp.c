@@ -1,7 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*
- * Copyright (C), 2018 Toradex AG
- *
- * SPDX-License-Identifier:	GPL-2.0+
+ * Copyright 2018-2019 Toradex
  */
 #include <common.h>
 #include <malloc.h>

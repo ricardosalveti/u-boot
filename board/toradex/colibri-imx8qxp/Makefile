@@ -1,5 +1,5 @@
 #
-# Copyright 2018 Toradex
+# Copyright 2018-2019 Toradex
 #
 # SPDX-License-Identifier:	GPL-2.0+
 #
