@@ -30,6 +30,10 @@
 
 #include "../common/tdx-cfg-block.h"
 
+#ifdef CONFIG_TDX_CMD_IMX_MFGR
+unsigned pmic_init(void);
+#endif
+
 DECLARE_GLOBAL_DATA_PTR;
 
 #define ESDHC_PAD_CTRL	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
@@ -360,6 +364,10 @@ int board_init(void)
 {
 #ifdef CONFIG_MXC_GPIO
 	board_gpio_init();
+#endif
+
+#ifdef CONFIG_TDX_CMD_IMX_MFGR
+	(void) pmic_init();
 #endif
 
 #ifdef CONFIG_FEC_MXC

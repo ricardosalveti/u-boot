@@ -31,7 +31,7 @@ unsigned pmic_init(void);
 int pf8100_prog(void);
 
 /* define for PMIC register dump */
-#define DEBUG
+//#define DEBUG
 
 /* Fuse the PMIC in production
  *
@@ -68,7 +68,7 @@ unsigned pmic_init(void)
 {
 	unsigned devid, revid, emrev, progid;
 
-	puts("PMIC: ");
+	puts("PMIC:  ");
 
 	/* get device ident */
 	if (pmic_i2c_read(PF8100_DEVICEID, &devid)) {
