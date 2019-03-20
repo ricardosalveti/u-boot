@@ -32,11 +32,6 @@
 #define CONFIG_ENV_OVERWRITE
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-/* FUSE command */
-#define CONFIG_CMD_FUSE
-
-/* GPIO configs */
-#define CONFIG_MXC_GPIO
 
 /* ENET Config */
 #define CONFIG_MII
@@ -60,8 +55,6 @@
 #define CONFIG_IPADDR			192.168.10.2
 #define CONFIG_NETMASK			255.255.255.0
 #define CONFIG_SERVERIP			192.168.10.1
-
-#define CONFIG_SUPPORT_RAW_INITRD
 
 #define MEM_LAYOUT_ENV_SETTINGS \
 	"fdt_addr_r=0x84000000\0" \
@@ -161,6 +154,7 @@
 		"fi;\0" \
 	"nfsboot=run netargs;dhcp ${loadaddr} ${image}; tftp ${fdt_addr} colibri-imx8qxp/${fdt_file}; booti ${loadaddr} - ${fdt_addr}\0"
 
+#undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
 		   "if run loadbootscript; then " \
