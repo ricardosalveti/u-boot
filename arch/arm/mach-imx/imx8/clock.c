@@ -124,7 +124,11 @@ unsigned int mxc_get_clock(enum mxc_clock clk)
 
 u32 imx_get_fecclk(void)
 {
+#ifdef CONFIG_TARGET_COLIBRI_IMX8QXP
+	return mxc_get_clock(MXC_FEC_CLK)/2;
+#else
 	return mxc_get_clock(MXC_FEC_CLK);
+#endif
 }
 
 static struct imx_i2c_map *get_i2c_desc(unsigned i2c_num)
