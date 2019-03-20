@@ -1,8 +1,7 @@
 /*
- * Copyright 2017 NXP
- * Copyright 2018 (C) Toradex AG
+ * Copyright 2018-2019 Toradex
  *
- * SPDX-License-Identifier:	GPL-2.0+
+ * SPDX-License-Identifier: GPL-2.0+
  */
 
 #ifndef __COLIBRI_IMX8QXP_H
