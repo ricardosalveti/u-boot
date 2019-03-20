@@ -8,6 +8,7 @@
 #include <netdev.h>
 #include <fsl_ifc.h>
 #include <fdt_support.h>
+#include <linux/libfdt.h>
 #include <environment.h>
 #include <fsl_esdhc.h>
 #include <i2c.h>
@@ -19,13 +20,15 @@
 #include <asm/arch/imx8-pins.h>
 #include <dm.h>
 #include <imx8_hsio.h>
-#include <linux/libfdt.h>
 #include <usb.h>
 #include <asm/arch/iomux.h>
 #include <asm/arch/sys_proto.h>
-#include <asm/mach-imx//video.h>
+#include <asm/mach-imx/video.h>
 #include <asm/arch/video_common.h>
 #include <power-domain.h>
+#include <asm/arch/lpcg.h>
+
+#include "../common/tdx-cfg-block.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -40,23 +43,12 @@ DECLARE_GLOBAL_DATA_PTR;
 						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
 #define ENET_NORMAL_PAD_CTRL	ENET_INPUT_PAD_CTRL
 
-#define FSPI_PAD_CTRL	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
-						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
-
 #define GPIO_PAD_CTRL	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
 						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
 
-#define I2C_PAD_CTRL	((SC_PAD_CONFIG_OUT_IN << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
-						| (SC_PAD_28FDSOI_DSE_DV_LOW << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
-
 #define UART_PAD_CTRL	((SC_PAD_CONFIG_OUT_IN << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
 						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
-#if 0
-static iomux_cfg_t uart0_pads[] = {
-	SC_P_UART0_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
-	SC_P_UART0_TX | MUX_PAD_CTRL(UART_PAD_CTRL),
-};
-#endif
+
 static iomux_cfg_t uart3_pads[] = {
 	SC_P_FLEXCAN2_RX | MUX_MODE_ALT(2) | MUX_PAD_CTRL(UART_PAD_CTRL),
 	SC_P_FLEXCAN2_TX | MUX_MODE_ALT(2) | MUX_PAD_CTRL(UART_PAD_CTRL),
@@ -125,6 +117,7 @@ static iomux_cfg_t emmc0[] = {
 	SC_P_EMMC0_DATA5 | MUX_PAD_CTRL(ESDHC_PAD_CTRL),
 	SC_P_EMMC0_DATA6 | MUX_PAD_CTRL(ESDHC_PAD_CTRL),
 	SC_P_EMMC0_DATA7 | MUX_PAD_CTRL(ESDHC_PAD_CTRL),
+	SC_P_EMMC0_RESET_B | MUX_PAD_CTRL(ESDHC_PAD_CTRL),
 	SC_P_EMMC0_STROBE | MUX_PAD_CTRL(ESDHC_PAD_CTRL),
 };
 
@@ -155,6 +148,7 @@ int board_mmc_init(bd_t *bis)
 		case 0:
 			if (!power_domain_lookup_name("conn_sdhc0", &pd))
 				power_domain_on(&pd);
+
 			imx8_iomux_setup_multiple_pads(emmc0, ARRAY_SIZE(emmc0));
 			init_clk_usdhc(0);
 			usdhc_cfg[i].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
@@ -162,6 +156,7 @@ int board_mmc_init(bd_t *bis)
 		case 1:
 			if (!power_domain_lookup_name("conn_sdhc1", &pd))
 				power_domain_on(&pd);
+
 			imx8_iomux_setup_multiple_pads(usdhc1_sd, ARRAY_SIZE(usdhc1_sd));
 			init_clk_usdhc(1);
 			usdhc_cfg[i].sdhc_clk = mxc_get_clock(MXC_ESDHC2_CLK);
@@ -201,7 +196,6 @@ int board_mmc_getcd(struct mmc *mmc)
 }
 
 #endif /* CONFIG_FSL_ESDHC */
-
 
 #ifdef CONFIG_FEC_MXC
 #include <miiphy.h>
@@ -336,7 +330,7 @@ static void board_gpio_init(void)
 
 int checkboard(void)
 {
-	puts("Board: Colibri iMX8 ########## need to move to common handling\n");
+	puts("Board: Colibri iMX8X ########## need to move to common handling\n");
 
 	print_bootinfo();
 
@@ -371,10 +365,11 @@ int board_init(void)
 #ifdef CONFIG_FEC_MXC
 	setup_fec(CONFIG_FEC_ENET_DEV);
 #endif
+
 	return 0;
 }
 
-void board_quiesce_devices()
+void board_quiesce_devices(void)
 {
 	const char *power_on_devices[] = {
 		"dma_lpuart3",
@@ -423,14 +418,13 @@ int board_late_init(void)
 	env_set("board_rev", "v1.0");
 #endif
 
-#ifdef CONFIG_ENV_IS_IN_MMC
-	board_late_mmc_env_init();
-#endif
-
+	env_set("sec_boot", "no");
 #ifdef CONFIG_AHAB_BOOT
 	env_set("sec_boot", "yes");
-#else
-	env_set("sec_boot", "no");
+#endif
+
+#ifdef CONFIG_ENV_IS_IN_MMC
+	board_late_mmc_env_init();
 #endif
 
 	return 0;
