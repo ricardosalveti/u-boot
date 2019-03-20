@@ -25,18 +25,6 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-#if 0
-		reg_usdhc2_vmmc: usdhc2_vmmc {
-			compatible = "regulator-fixed";
-			regulator-name = "SD1_SPWR";
-			regulator-min-microvolt = <3000000>;
-			regulator-max-microvolt = <3000000>;
-			gpio = <&gpio4 19 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
-			startup-delay-us = <100>;
-			off-on-delay-us = <12000>;
-		};
-#endif
 		reg_usb_otg1_vbus: regulator@0 {
 			compatible = "regulator-fixed";
 			reg = <0>;
@@ -45,14 +33,13 @@
 			regulator-max-microvolt = <5000000>;
 			enable-active-high;
 		};
-
 	};
 
 };
 
 &iomuxc {
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_hog1>, <&pinctrl_hog2>;
+	pinctrl-0 = <&pinctrl_hog0>, <&pinctrl_hog1>, <&pinctrl_hog2>;
 
 	colibri-imx8qxp {
 		pinctrl_lpuart0: lpuart0grp {
@@ -94,6 +81,18 @@
 				SC_P_ENET0_RGMII_RXD0_CONN_ENET0_RGMII_RXD0	0x00000061
 				SC_P_ENET0_RGMII_RXD1_CONN_ENET0_RGMII_RXD1	0x00000061
 				SC_P_ENET0_RGMII_RXD2_CONN_ENET0_RMII_RX_ER	0x00000061
+			>;
+		};
+
+		pinctrl_gpio_bl_on: gpio-bl-on {
+			fsl,pins = <
+				SC_P_QSPI0A_DATA3_LSIO_GPIO3_IO12	0x00000040
+			>;
+		};
+
+		pinctrl_hog0: hog0grp {
+			fsl,pins = <
+				SC_P_COMP_CTL_GPIO_1V8_3V3_GPIORHB_PAD  0x000514a0 /* Use pads in 3.3V mode */
 			>;
 		};
 
@@ -139,11 +138,11 @@
 			>;
 		};
 
-
-		pinctrl_lpi2c1: lpi1cgrp {
+		/* Off Module I2C */
+		pinctrl_i2c1: i2c1grp {
 			fsl,pins = <
-				SC_P_MIPI_DSI0_GPIO0_00_ADMA_I2C1_SCL	0x06000020
-				SC_P_MIPI_DSI0_GPIO0_01_ADMA_I2C1_SDA	0x06000020
+				SC_P_MIPI_DSI0_GPIO0_00_ADMA_I2C1_SCL	0x06000021
+				SC_P_MIPI_DSI0_GPIO0_01_ADMA_I2C1_SDA	0x06000021
 			>;
 		};
 
@@ -239,28 +238,7 @@
 				SC_P_USDHC1_VSELECT_CONN_USDHC1_VSELECT	0x00000021
 			>;
 		};
-#if 0
-		pinctrl_flexspi0: flexspi0grp {
-			fsl,pins = <
-				SC_P_QSPI0A_DATA0_LSIO_QSPI0A_DATA0	0x0600004c
-				SC_P_QSPI0A_DATA1_LSIO_QSPI0A_DATA1	0x0600004c
-				SC_P_QSPI0A_DATA2_LSIO_QSPI0A_DATA2	0x0600004c
-				SC_P_QSPI0A_DATA3_LSIO_QSPI0A_DATA3	0x0600004c
-				SC_P_QSPI0A_DQS_LSIO_QSPI0A_DQS		0x0600004c
-				SC_P_QSPI0A_SS0_B_LSIO_QSPI0A_SS0_B	0x0600004c
-				SC_P_QSPI0A_SS1_B_LSIO_QSPI0A_SS1_B	0x0600004c
-				SC_P_QSPI0A_SCLK_LSIO_QSPI0A_SCLK	0x0600004c
-				SC_P_QSPI0B_SCLK_LSIO_QSPI0B_SCLK	0x0600004c
-				SC_P_QSPI0B_DATA0_LSIO_QSPI0B_DATA0	0x0600004c
-				SC_P_QSPI0B_DATA1_LSIO_QSPI0B_DATA1	0x0600004c
-				SC_P_QSPI0B_DATA2_LSIO_QSPI0B_DATA2	0x0600004c
-				SC_P_QSPI0B_DATA3_LSIO_QSPI0B_DATA3	0x0600004c
-				SC_P_QSPI0B_DQS_LSIO_QSPI0B_DQS		0x0600004c
-				SC_P_QSPI0B_SS0_B_LSIO_QSPI0B_SS0_B	0x0600004c
-				SC_P_QSPI0B_SS1_B_LSIO_QSPI0B_SS1_B	0x0600004c
-			>;
-		};
-#endif
+
 		pinctrl_i2c0_mipi_lvds0: mipi_lvds0_i2c0_grp {
 			fsl,pins = <
 				SC_P_MIPI_DSI0_I2C0_SCL_MIPI_DSI0_I2C0_SCL 0xc6000020
@@ -268,7 +246,7 @@
 			>;
 		};
 
-		pinctrl_i2c0_mipi_csi: mipi_csi_i2c0_grp {
+		pinctrl_i2c0_mipi_lvds1: mipi_lvds1_i2c0_grp {
 			fsl,pins = <
 				SC_P_MIPI_DSI1_I2C0_SCL_MIPI_DSI1_I2C0_SCL 0xc6000020
 				SC_P_MIPI_DSI1_I2C0_SDA_MIPI_DSI1_I2C0_SDA 0xc6000020
@@ -280,7 +258,7 @@
 &lpuart0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_lpuart0>;
-	status = "disabled";
+	status = "okay";
 };
 
 &lpuart3 {
@@ -306,11 +284,10 @@
 };
 
 &fec1 {
+	phy-handle = <&ethphy0>;
+	phy-mode = "rmii";
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_fec1>;
-	phy-mode = "rmii";
-	phy-handle = <&ethphy0>;
-//TODO	fsl,magic-packet;
 	status = "okay";
 
 	mdio {
@@ -324,29 +301,13 @@
 		};
 	};
 };
-#if 0
-&flexspi0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_flexspi0>;
-	status = "okay";
-
-	flash0: mt35xu512aba@0 {
-		reg = <0>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-		compatible = "spi-flash";
-		spi-max-frequency = <29000000>;
-		spi-nor,ddr-quad-read-dummy = <8>;
-	};
-};
-#endif
 
 &i2c1 {
 	#address-cells = <1>;
 	#size-cells = <0>;
 	clock-frequency = <100000>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_lpi2c1>;
+	pinctrl-0 = <&pinctrl_i2c1>;
 	status = "okay";
 };
 
@@ -363,29 +324,28 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_i2c0_mipi_csi>;
+	pinctrl-0 = <&pinctrl_i2c0_mipi_lvds1>;
 	clock-frequency = <100000>;
 	status = "okay";
 };
 
 &usdhc1 {
+	bus-width = <8>;
+	non-removable;
 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
 	pinctrl-0 = <&pinctrl_usdhc1>;
 	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
 	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-	bus-width = <8>;
-	non-removable;
 	status = "okay";
 };
 
 &usdhc2 {
+	bus-width = <4>;
+	cd-gpios = <&gpio3 9 GPIO_ACTIVE_LOW>;
 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
 	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
 	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
 	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-	bus-width = <4>;
-	cd-gpios = <&gpio3 9 GPIO_ACTIVE_LOW>;
-/*	vmmc-supply = <&reg_usdhc2_vmmc>; */
 	status = "okay";
 };
 
