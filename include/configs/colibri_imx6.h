@@ -210,10 +210,10 @@
 	"nfsboot=run setup; " \
 		"setenv bootargs ${defargs} ${nfsargs} ${setupargs} " \
 		"${vidargs}; echo Booting via DHCP/TFTP/NFS...; " \
-		"run nfsdtbload; dhcp ${kernel_addr_r} " \
-		"&& run fdt_fixup && bootz ${kernel_addr_r} ${dtbparam}\0" \
+		"dhcp ${kernel_addr_r} && run nfsdtbload && " \
+		"run fdt_fixup && bootz ${kernel_addr_r} ${dtbparam}\0" \
 	"nfsdtbload=setenv dtbparam; tftp ${fdt_addr_r} ${fdt_file} " \
-		"&& setenv dtbparam \" - ${fdt_addr_r}\" && true\0"
+		"&& setenv dtbparam \" - ${fdt_addr_r}\"; true\0"
 
 #define SD_BOOTCMD \
 	"sdargs=ip=off root=/dev/mmcblk1p2 ro rootfstype=ext4 rootwait\0" \
