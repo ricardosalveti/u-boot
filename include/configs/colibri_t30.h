@@ -104,11 +104,11 @@
 	"nfsargs=ip=:::::eth0:on root=/dev/nfs rw\0" \
 	"nfsboot=usb start; run setup; setenv bootargs ${defargs} ${nfsargs} " \
 		"${setupargs} ${vidargs}; echo Booting via DHCP/TFTP/NFS...; " \
-		"run nfsdtbload; dhcp ${kernel_addr_r} " \
-		"&& run fdt_fixup && bootz ${kernel_addr_r} - ${dtbparam}\0" \
+		"dhcp ${kernel_addr_r} && run nfsdtbload && " \
+		"run fdt_fixup && bootz ${kernel_addr_r} - ${dtbparam}\0" \
 	"nfsdtbload=setenv dtbparam; tftp ${fdt_addr_r} " \
 		"${soc}-colibri-${fdt_board}.dtb " \
-		"&& setenv dtbparam ${fdt_addr_r}\0"
+		"&& setenv dtbparam ${fdt_addr_r}; true\0"
 
 #define SD_BOOTCMD \
 	"sdargs=ip=off root=/dev/mmcblk1p2 ro rootfstype=ext3 rootwait\0" \
