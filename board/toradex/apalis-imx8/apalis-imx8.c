@@ -8,6 +8,7 @@
 #include <netdev.h>
 #include <fsl_ifc.h>
 #include <fdt_support.h>
+#include <linux/libfdt.h>
 #include <environment.h>
 #include <fsl_esdhc.h>
 #include <i2c.h>
@@ -19,13 +20,13 @@
 #include <asm/arch/imx8-pins.h>
 #include <dm.h>
 #include <imx8_hsio.h>
-#include <linux/libfdt.h>
 #include <usb.h>
 #include <asm/arch/iomux.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/mach-imx/video.h>
 #include <asm/arch/video_common.h>
 #include <power-domain.h>
+#include <asm/arch/lpcg.h>
 
 #include "../common/tdx-cfg-block.h"
 
@@ -44,14 +45,8 @@ DECLARE_GLOBAL_DATA_PTR;
 #define ENET_NORMAL_PAD_CTRL	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
 						| (SC_PAD_28FDSOI_DSE_18V_10MA << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
 
-#define FSPI_PAD_CTRL	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
-						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
-
 #define GPIO_PAD_CTRL	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
 						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
-
-#define I2C_PAD_CTRL	((SC_PAD_CONFIG_OUT_IN << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
-						| (SC_PAD_28FDSOI_DSE_DV_LOW << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
 
 #define UART_PAD_CTRL	((SC_PAD_CONFIG_OUT_IN << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
 						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
@@ -88,6 +83,8 @@ int board_early_init_f(void)
 	sciErr = sc_pm_clock_enable(ipcHndl, SC_R_UART_1, 2, true, false);
 	if (sciErr != SC_ERR_NONE)
 		return 0;
+
+	LPCG_AllClockOn(LPUART_1_LPCG);
 
 	setup_iomux_uart();
 
@@ -296,7 +293,7 @@ int board_eth_init(bd_t *bis)
 
 	enet_device_phy_reset();
 
-	ret = fecmxc_initialize_multi(bis, 0,
+	ret = fecmxc_initialize_multi(bis, CONFIG_FEC_ENET_DEV,
 		CONFIG_FEC_MXC_PHYADDR, IMX_FEC_BASE);
 	if (ret)
 		printf("FEC1 MXC: %s:failed\n", __func__);
@@ -323,9 +320,8 @@ int checkboard(void)
 	 *        returned by sc_ipc_open matches SC_IPC_CH, use this
 	 *        macro (valid after reloc) for subsequent SCI calls.
 	 */
-	if (gd->arch.ipc_channel_handle != SC_IPC_CH) {
+	if (gd->arch.ipc_channel_handle != SC_IPC_CH)
 		printf("\nSCI error! Invalid handle\n");
-	}
 
 #ifdef SCI_FORCE_ABORT
 	sc_rpc_msg_t abort_msg;
@@ -375,7 +371,6 @@ static void imx8qm_hsio_initialize(void)
 	}
 
 	imx8_iomux_setup_multiple_pads(board_pcie_pins, ARRAY_SIZE(board_pcie_pins));
-
 }
 
 void pci_init_board(void)
@@ -400,7 +395,7 @@ int board_init(void)
 	return 0;
 }
 
-void board_quiesce_devices()
+void board_quiesce_devices(void)
 {
 	const char *power_on_devices[] = {
 		"dma_lpuart1",
@@ -419,7 +414,7 @@ void detail_board_ddr_info(void)
  */
 void reset_cpu(ulong addr)
 {
-	puts("SCI reboot request\n");
+	puts("SCI reboot request");
 	sc_pm_reboot(SC_IPC_CH, SC_PM_RESET_TYPE_COLD);
 	while (1)
 		putc('.');
@@ -472,12 +467,37 @@ void board_late_mmc_env_init(void)
 int board_late_init(void)
 {
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-	env_set("board_name", "ARM2");
-	env_set("board_rev", "iMX8QM");
+/* TODO move to common */
+	env_set("board_name", "Apalis iMX8QM");
+	env_set("board_rev", "v1.0");
+#endif
+
+#ifdef CONFIG_AHAB_BOOT
+	env_set("sec_boot", "yes");
+#else
+	env_set("sec_boot", "no");
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_MMC
 	board_late_mmc_env_init();
+#endif
+
+#ifdef IMX_LOAD_HDMI_FIMRWARE
+	char *end_of_uboot;
+	char command[256];
+	end_of_uboot = (char *)(ulong)(CONFIG_SYS_TEXT_BASE + _end_ofs + fdt_totalsize(gd->fdt_blob));
+	end_of_uboot += 9;
+
+	/* load hdmitxfw.bin and hdmirxfw.bin*/
+	memcpy(IMX_HDMI_FIRMWARE_LOAD_ADDR, end_of_uboot,
+			IMX_HDMITX_FIRMWARE_SIZE + IMX_HDMIRX_FIRMWARE_SIZE);
+
+	sprintf(command, "hdp load 0x%x", IMX_HDMI_FIRMWARE_LOAD_ADDR);
+	run_command(command, 0);
+
+	sprintf(command, "hdprx load 0x%x",
+			IMX_HDMI_FIRMWARE_LOAD_ADDR + IMX_HDMITX_FIRMWARE_SIZE);
+	run_command(command, 0);
 #endif
 
 	return 0;
@@ -491,30 +511,6 @@ int is_recovery_key_pressing(void)
 }
 #endif /*CONFIG_ANDROID_RECOVERY*/
 #endif /*CONFIG_FSL_FASTBOOT*/
-
-/* Only Enable USB3 resources currently */
-int board_usb_init(int index, enum usb_init_type init)
-{
-#ifndef CONFIG_DM_USB
-	struct power_domain pd;
-	int ret;
-
-	/* Power on usb */
-	if (!power_domain_lookup_name("conn_usb2", &pd)) {
-		ret = power_domain_on(&pd);
-		if (ret)
-			printf("conn_usb2 Power up failed! (error = %d)\n", ret);
-	}
-
-	if (!power_domain_lookup_name("conn_usb2_phy", &pd)) {
-		ret = power_domain_on(&pd);
-		if (ret)
-			printf("conn_usb2_phy Power up failed! (error = %d)\n", ret);
-	}
-#endif
-
-	return 0;
-}
 
 #if defined(CONFIG_VIDEO_IMXDPUV1)
 static void enable_lvds(struct display_info_t const *dev)
