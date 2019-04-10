@@ -23,10 +23,10 @@
 
 #define CONFIG_FSL_ESDHC
 #define CONFIG_FSL_USDHC
-#define CONFIG_SYS_FSL_ESDHC_ADDR       0
-#define USDHC1_BASE_ADDR                0x5B010000
-#define USDHC2_BASE_ADDR                0x5B020000
-#define USDHC3_BASE_ADDR                0x5B030000
+#define CONFIG_SYS_FSL_ESDHC_ADDR	0
+#define USDHC1_BASE_ADDR		0x5B010000
+#define USDHC2_BASE_ADDR		0x5B020000
+#define USDHC3_BASE_ADDR		0x5B030000
 #define CONFIG_SUPPORT_EMMC_BOOT	/* eMMC specific */
 
 #define CONFIG_ENV_OVERWRITE
@@ -36,12 +36,12 @@
 #define CONFIG_SCSI
 #define CONFIG_SCSI_AHCI
 #define CONFIG_SCSI_AHCI_PLAT
-#define CONFIG_SYS_SCSI_MAX_SCSI_ID 1
+#define CONFIG_SYS_SCSI_MAX_SCSI_ID	1
 #define CONFIG_CMD_SCSI
 #define CONFIG_LIBATA
-#define CONFIG_SYS_SCSI_MAX_LUN 1
-#define CONFIG_SYS_SCSI_MAX_DEVICE      (CONFIG_SYS_SCSI_MAX_SCSI_ID * CONFIG_SYS_SCSI_MAX_LUN)
-#define CONFIG_SYS_SCSI_MAXDEVICE       CONFIG_SYS_SCSI_MAX_DEVICE
+#define CONFIG_SYS_SCSI_MAX_LUN		1
+#define CONFIG_SYS_SCSI_MAX_DEVICE	(CONFIG_SYS_SCSI_MAX_SCSI_ID * CONFIG_SYS_SCSI_MAX_LUN)
+#define CONFIG_SYS_SCSI_MAXDEVICE	CONFIG_SYS_SCSI_MAX_DEVICE
 #define CONFIG_SYS_SATA_MAX_DEVICE	1
 #define CONFIG_SATA_IMX
 
@@ -53,17 +53,12 @@
 #endif
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-/* FUSE command */
-#define CONFIG_CMD_FUSE
-
-/* GPIO configs */
-#define CONFIG_MXC_GPIO
 
 /* ENET Config */
 #define CONFIG_MII
 
 #define CONFIG_FEC_MXC
-#define CONFIG_FEC_XCV_TYPE             RGMII
+#define CONFIG_FEC_XCV_TYPE		RGMII
 #define FEC_QUIRK_ENET_MAC
 
 #define CONFIG_PHY_GIGE /* Support for 1000BASE-X */
@@ -82,8 +77,6 @@
 #define CONFIG_FEC_MXC_PHYADDR		7
 #define CONFIG_ETHPRIME			"FEC"
 
-#define CONFIG_SUPPORT_RAW_INITRD
-
 #define MEM_LAYOUT_ENV_SETTINGS \
 	"fdt_addr_r=0x84000000\0" \
 	"kernel_addr_r=0x82000000\0" \
@@ -98,19 +91,12 @@
 	"m4boot_0=run loadm4image_0; dcache flush; bootaux ${loadaddr} 0\0" \
 	"m4boot_1=run loadm4image_1; dcache flush; bootaux ${loadaddr} 1\0" \
 
-#ifdef CONFIG_NAND_BOOT
-#define MFG_NAND_PARTITION "mtdparts=gpmi-nand:64m(boot),16m(kernel),16m(dtb),1m(misc),-(rootfs) "
-#else
-#define MFG_NAND_PARTITION ""
-#endif
-
 #define CONFIG_MFG_ENV_SETTINGS \
 	"mfgtool_args=setenv bootargs console=${console},${baudrate} " \
 		"rdinit=/linuxrc " \
 		"g_mass_storage.stall=0 g_mass_storage.removable=1 " \
 		"g_mass_storage.idVendor=0x066F g_mass_storage.idProduct=0x37FF "\
 		"g_mass_storage.iSerialNumber=\"\" "\
-		MFG_NAND_PARTITION \
 		"video=imxdpufb5:off video=imxdpufb6:off video=imxdpufb7:off " \
 		"clk_ignore_unused "\
 		"\0" \
@@ -181,6 +167,7 @@
 			"booti; " \
 		"fi;\0"
 
+#undef CONFIG_BOOTCOMMAND
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
 		   "if run loadbootscript; then " \
@@ -197,15 +184,17 @@
 #define CONFIG_LOADADDR			0x80280000
 #define CONFIG_SYS_TEXT_BASE		0x80020000
 
-#define CONFIG_SYS_LOAD_ADDR           CONFIG_LOADADDR
+#define CONFIG_SYS_LOAD_ADDR		CONFIG_LOADADDR
 
-#define CONFIG_SYS_INIT_SP_ADDR         0x80200000
+#define CONFIG_SYS_INIT_SP_ADDR		0x80200000
 
+#define CONFIG_SYS_MEMTEST_START	0x88000000
+#define CONFIG_SYS_MEMTEST_END		0x89000000
 
 /* Default environment is in SD */
-#define CONFIG_ENV_SIZE			0x1000
+#define CONFIG_ENV_SIZE			0x2000
 
-#define CONFIG_ENV_OFFSET       (64 * SZ_64K)
+#define CONFIG_ENV_OFFSET		(64 * SZ_64K)
 #define CONFIG_SYS_MMC_ENV_PART		0	/* user area */
 
 #define CONFIG_SYS_MMC_IMG_LOAD_PART	1
@@ -229,11 +218,10 @@
 #define CONFIG_BAUDRATE			115200
 
 /* Monitor Command Prompt */
-#define CONFIG_HUSH_PARSER
-#define CONFIG_SYS_PROMPT_HUSH_PS2     "> "
-#define CONFIG_SYS_CBSIZE              1024
-#define CONFIG_SYS_MAXARGS             64
-#define CONFIG_SYS_BARGSIZE CONFIG_SYS_CBSIZE
+#define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
+#define CONFIG_SYS_CBSIZE		2048
+#define CONFIG_SYS_MAXARGS		64
+#define CONFIG_SYS_BARGSIZE		CONFIG_SYS_CBSIZE
 #define CONFIG_SYS_PBSIZE		(CONFIG_SYS_CBSIZE + \
 					sizeof(CONFIG_SYS_PROMPT) + 16)
 
@@ -242,22 +230,9 @@
 
 #define CONFIG_IMX_SMMU
 
-/* MT35XU512ABA1G12 has only one Die, so QSPI0 B won't work */
-#ifdef CONFIG_FSL_FSPI
-#define CONFIG_SF_DEFAULT_BUS		0
-#define CONFIG_SF_DEFAULT_CS		0
-#define CONFIG_SF_DEFAULT_SPEED	40000000
-#define CONFIG_SF_DEFAULT_MODE		SPI_MODE_0
-#define FSL_FSPI_FLASH_SIZE		SZ_64M
-#define FSL_FSPI_FLASH_NUM		1
-#define FSPI0_BASE_ADDR			0x5d120000
-#define FSPI0_AMBA_BASE			0
-#define CONFIG_SYS_FSL_FSPI_AHB
-#endif
-
 /* USB Config */
 #ifdef CONFIG_CMD_USB
-#define CONFIG_USB_MAX_CONTROLLER_COUNT 2
+#define CONFIG_USB_MAX_CONTROLLER_COUNT	2
 
 /* USB OTG controller configs */
 #ifdef CONFIG_USB_EHCI_HCD
@@ -269,10 +244,6 @@
 
 #ifdef CONFIG_USB_GADGET
 #define CONFIG_USBD_HS
-#endif
-
-#if defined(CONFIG_ANDROID_SUPPORT)
-#include "imx8qm_arm2_android.h"
 #endif
 
 /* Framebuffer */
@@ -288,7 +259,11 @@
 #endif
 
 #define CONFIG_OF_SYSTEM_SETUP
-#define BOOTAUX_RESERVED_MEM_BASE 0x88000000
-#define BOOTAUX_RESERVED_MEM_SIZE 0x08000000 /* Reserve from second 128MB */
+#define BOOTAUX_RESERVED_MEM_BASE	0x88000000
+#define BOOTAUX_RESERVED_MEM_SIZE	0x08000000 /* Reserve from second 128MB */
+
+#if defined(CONFIG_ANDROID_SUPPORT)
+#include "imx8qm_arm2_android.h"
+#endif
 
 #endif /* __APALIS_IMX8QM_H */
