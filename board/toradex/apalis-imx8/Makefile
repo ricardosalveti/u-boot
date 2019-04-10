@@ -1,7 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0+
 #
-# Copyright 2017 Toradex
-#
-# SPDX-License-Identifier:	GPL-2.0+
+# Copyright 2017-2019 Toradex
 #
 
 obj-y += apalis-imx8.o

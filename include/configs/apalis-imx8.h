@@ -1,8 +1,6 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
 /*
- * Copyright 2017 NXP
- * Copyright 2017 Toradex
- *
- * SPDX-License-Identifier:	GPL-2.0+
+ * Copyright 2017-2019 Toradex
  */
 
 #ifndef __APALIS_IMX8QM_H
