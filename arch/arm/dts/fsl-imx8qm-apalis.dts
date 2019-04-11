@@ -73,6 +73,8 @@
 				SC_P_ENET0_RGMII_RXD1_CONN_ENET0_RGMII_RXD1	0x06000020
 				SC_P_ENET0_RGMII_RXD2_CONN_ENET0_RGMII_RXD2	0x06000020
 				SC_P_ENET0_RGMII_RXD3_CONN_ENET0_RGMII_RXD3	0x06000020
+				SC_P_ENET0_REFCLK_125M_25M_LSIO_GPIO4_IO15	0x00000021
+				SC_P_LVDS1_GPIO01_LSIO_GPIO1_IO11		0x00000020
 			>;
 		};
 
@@ -230,7 +232,8 @@
 	pinctrl-0 = <&pinctrl_fec1>;
 	phy-mode = "rgmii";
 	phy-handle = <&ethphy0>;
-	fsl,ar8031-phy-fixup;
+	phy-reset-gpios = <&gpio1 11 1>;
+	phy-reset-duration = <10>;
 	fsl,magic-packet;
 	status = "okay";
 
