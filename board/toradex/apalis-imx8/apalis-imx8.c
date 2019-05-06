@@ -213,7 +213,7 @@ void reset_cpu(ulong addr)
 #ifdef CONFIG_OF_BOARD_SETUP
 int ft_board_setup(void *blob, bd_t *bd)
 {
-	return 0;
+	return ft_common_board_setup(blob, bd);
 }
 #endif
 
