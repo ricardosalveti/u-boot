@@ -102,6 +102,7 @@
 	BOOTENV \
 	M4_BOOT_ENV \
 	MEM_LAYOUT_ENV_SETTINGS \
+	"bootcmd_mfg=source 0x82e00000\0" \
 	"script=boot.scr\0" \
 	"image=Image\0" \
 	"panel=NULL\0" \
