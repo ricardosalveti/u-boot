@@ -91,7 +91,6 @@
 	"panel=NULL\0" \
 	"console=ttyLP3,115200 earlycon=lpuart32,0x5a090000,115200\0" \
 	"fdt_addr=0x83000000\0"			\
-	"fdt_high=0xffffffffffffffff\0"		\
 	"boot_fdt=try\0" \
 	"fdt_file=fsl-imx8qxp-colibri-eval-v3.dtb\0" \
 	"initrd_addr=0x83800000\0"		\
