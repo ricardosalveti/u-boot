@@ -196,6 +196,8 @@
 #define CONFIG_MMCROOT			"/dev/mmcblk0p2"  /* USDHC1 eMMC */
 #define CONFIG_SYS_FSL_USDHC_NUM	3
 
+#define CONFIG_SYS_BOOTM_LEN		(64 << 20) /* Increase max gunzip size */
+
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		((CONFIG_ENV_SIZE + (32*1024)) * 1024)
 
