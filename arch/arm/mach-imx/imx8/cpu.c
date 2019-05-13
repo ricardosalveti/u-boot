@@ -815,7 +815,6 @@ const char *get_core_name(void)
 		return "?";
 }
 
-#if IS_ENABLED(CONFIG_IMX_SCU_THERMAL)
 static int cpu_imx_get_temp(void)
 {
 	struct udevice *thermal_dev;
@@ -834,12 +833,6 @@ static int cpu_imx_get_temp(void)
 
 	return cpu_tmp;
 }
-#else
-static int cpu_imx_get_temp(void)
-{
-	return 0;
-}
-#endif
 
 int cpu_imx_get_desc(struct udevice *dev, char *buf, int size)
 {
