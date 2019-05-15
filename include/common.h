@@ -363,6 +363,10 @@ int cpu_disable(u32 nr);
 int cpu_release(u32 nr, int argc, char * const argv[]);
 #endif
 
+#ifdef CONFIG_CMD_READ
+int do_raw_read(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]);
+#endif
+
 #else	/* __ASSEMBLY__ */
 
 #endif	/* __ASSEMBLY__ */

@@ -163,8 +163,13 @@ void fastboot_set_progress_callback(void (*progress)(const char *msg))
  */
 void fastboot_init(void *buf_addr, u32 buf_size)
 {
+#ifdef CONFIG_FSL_FASTBOOT
+	fastboot_buf_addr = buf_addr ? buf_addr :
+				       (void *)env_get_ulong("fastboot_buffer", 16, CONFIG_FASTBOOT_BUF_ADDR);
+#else
 	fastboot_buf_addr = buf_addr ? buf_addr :
 				       (void *)CONFIG_FASTBOOT_BUF_ADDR;
+#endif
 	fastboot_buf_size = buf_size ? buf_size : CONFIG_FASTBOOT_BUF_SIZE;
 	fastboot_set_progress_callback(NULL);
 }
