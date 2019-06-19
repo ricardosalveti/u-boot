@@ -1045,7 +1045,7 @@ config TARGET_VEXPRESS64_BASE_FVP
 
 config TARGET_VEXPRESS64_BASE_FVP_AARCH32
 	bool "Support Versatile Express ARMv8a 32-bit FVP BASE model booting from DRAM"
-	select CPU_V7
+	select CPU_V7A
 	select SEMIHOSTING
 	help
 	  This target is derived from TARGET_VEXPRESS64_BASE_FVP and over-rides
@@ -1060,7 +1060,7 @@ config TARGET_VEXPRESS64_JUNO
 
 config TARGET_VEXPRESS64_JUNO_AARCH32
 	bool "Support Versatile Express Juno Development Platform in 32-bit mode"
-	select CPU_V7
+	select CPU_V7A
 	help
 	  This target is derived from TARGET_VEXPRESS64_JUNO, except it uses an
 	  ARMv7 CPU type to support booting in Aarch32 mode

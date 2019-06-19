@@ -133,7 +133,7 @@ int board_eth_init(bd_t *bis)
 {
 	int rc = 0;
 #ifdef CONFIG_TARGET_VEXPRESS64_JUNO
-	char *bootargs_sky2 = getenv("bootargs_sky2");
+	char *bootargs_sky2 = env_get("bootargs_sky2");
 
 	if (!bootargs_sky2){
 		char macstr[255];
@@ -152,7 +152,7 @@ int board_eth_init(bd_t *bis)
 			mac[5] = macl & 0xff;
 
 			sprintf(macstr, "sky2.mac_address=0x%2.2x,0x%2.2x,0x%2.2x,0x%2.2x,0x%2.2x,0x%2.2x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-			setenv("bootargs_sky2", macstr);
+			env_set("bootargs_sky2", macstr);
 		}
 	}
 #endif
