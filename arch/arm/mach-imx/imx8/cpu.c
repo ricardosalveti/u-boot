@@ -1441,14 +1441,30 @@ static int get_owned_memreg(sc_rm_mr_t mr, sc_faddr_t *addr_start, sc_faddr_t *a
 	return -EINVAL;
 }
 
+__weak void board_mem_get_layout(uint64_t *phys_sdram_1_start,
+				 uint64_t *phys_sdram_1_size,
+				 uint64_t *phys_sdram_2_start,
+				 uint64_t *phys_sdram_2_size)
+{
+	*phys_sdram_1_start = PHYS_SDRAM_1;
+	*phys_sdram_1_size = PHYS_SDRAM_1_SIZE;
+	*phys_sdram_2_start = PHYS_SDRAM_2;
+	*phys_sdram_2_size = PHYS_SDRAM_2_SIZE;
+}
+
 phys_size_t get_effective_memsize(void)
 {
 	sc_rm_mr_t mr;
 	sc_faddr_t start, end, start_aligned;
+	uint64_t phys_sdram_1_start, phys_sdram_1_size;
+	uint64_t phys_sdram_2_start, phys_sdram_2_size;
 	int err;
 
+	board_mem_get_layout(&phys_sdram_1_start, &phys_sdram_1_size,
+			     &phys_sdram_2_start, &phys_sdram_2_size);
+
 	if (IS_ENABLED(CONFIG_XEN))
-		return PHYS_SDRAM_1_SIZE;
+		return phys_sdram_1_size;
 
 	for (mr = 0; mr < 64; mr++) {
 		err = get_owned_memreg(mr, &start, &end);
@@ -1458,28 +1474,33 @@ phys_size_t get_effective_memsize(void)
 				continue;
 
 			/* Find the memory region runs the u-boot */
-			if (start >= PHYS_SDRAM_1 && start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)
+			if (start >= phys_sdram_1_start && start <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size)
 				&& (start <= CONFIG_SYS_TEXT_BASE && CONFIG_SYS_TEXT_BASE <= end)){
-				if ((end + 1) <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
-					return (end - PHYS_SDRAM_1 + 1);
+				if ((end + 1) <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size))
+					return (end - phys_sdram_1_start + 1);
 				else
-					return PHYS_SDRAM_1_SIZE;
+					return phys_sdram_1_size;
 			}
 		}
 	}
 
-	return PHYS_SDRAM_1_SIZE;
+	return phys_sdram_1_size;
 }
 
 int dram_init(void)
 {
 	sc_rm_mr_t mr;
 	sc_faddr_t start, end;
+	uint64_t phys_sdram_1_start, phys_sdram_1_size;
+	uint64_t phys_sdram_2_start, phys_sdram_2_size;
 	int err;
 
+	board_mem_get_layout(&phys_sdram_1_start, &phys_sdram_1_size,
+			     &phys_sdram_2_start, &phys_sdram_2_size);
+
 	if (IS_ENABLED(CONFIG_XEN)) {
-		gd->ram_size = PHYS_SDRAM_1_SIZE;
-		gd->ram_size += PHYS_SDRAM_2_SIZE;
+		gd->ram_size = phys_sdram_1_size;
+		gd->ram_size += phys_sdram_2_size;
 
 		return 0;
 	}
@@ -1491,27 +1512,27 @@ int dram_init(void)
 			if (start > end) /* Too small memory region, not use it */
 				continue;
 
-			if (start >= PHYS_SDRAM_1 && start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)) {
+			if (start >= phys_sdram_1_start && start <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size)) {
 
-				if ((end + 1) <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
+				if ((end + 1) <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size))
 					gd->ram_size += end - start + 1;
 				else
-					gd->ram_size += ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE) - start;
+					gd->ram_size += ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size) - start;
 
-			} else if (start >= PHYS_SDRAM_2 && start <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE)) {
+			} else if (start >= phys_sdram_2_start && start <= ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size)) {
 
-				if ((end + 1) <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE))
+				if ((end + 1) <= ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size))
 					gd->ram_size += end - start + 1;
 				else
-					gd->ram_size += ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE) - start;
+					gd->ram_size += ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size) - start;
 			}
 		}
 	}
 
 	/* If error, set to the default value */
 	if (!gd->ram_size) {
-		gd->ram_size = PHYS_SDRAM_1_SIZE;
-		gd->ram_size += PHYS_SDRAM_2_SIZE;
+		gd->ram_size = phys_sdram_1_size;
+		gd->ram_size += phys_sdram_2_size;
 	}
 	return 0;
 }
@@ -1540,14 +1561,19 @@ int dram_init_banksize(void)
 {
 	sc_rm_mr_t mr;
 	sc_faddr_t start, end;
+	uint64_t phys_sdram_1_start, phys_sdram_1_size;
+	uint64_t phys_sdram_2_start, phys_sdram_2_size;
 	int i = 0;
 	int err;
 
+	board_mem_get_layout(&phys_sdram_1_start, &phys_sdram_1_size,
+			     &phys_sdram_2_start, &phys_sdram_2_size);
+
 	if (IS_ENABLED(CONFIG_XEN)) {
-		gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
-		gd->bd->bi_dram[0].size = PHYS_SDRAM_1_SIZE;
-		gd->bd->bi_dram[1].start = PHYS_SDRAM_2;
-		gd->bd->bi_dram[1].size = PHYS_SDRAM_2_SIZE;
+		gd->bd->bi_dram[0].start = phys_sdram_1_start;
+		gd->bd->bi_dram[0].size = phys_sdram_1_size;
+		gd->bd->bi_dram[1].start = phys_sdram_2_start;
+		gd->bd->bi_dram[1].size = phys_sdram_2_size;
 
 		return 0;
 	}
@@ -1559,23 +1585,23 @@ int dram_init_banksize(void)
 			if (start > end) /* Too small memory region, not use it */
 				continue;
 
-			if (start >= PHYS_SDRAM_1 && start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)) {
+			if (start >= phys_sdram_1_start && start <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size)) {
 				gd->bd->bi_dram[i].start = start;
 
-				if ((end + 1) <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
+				if ((end + 1) <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size))
 					gd->bd->bi_dram[i].size = end - start + 1;
 				else
-					gd->bd->bi_dram[i].size = ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE) - start;
+					gd->bd->bi_dram[i].size = ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size) - start;
 
 				dram_bank_sort(i);
 				i++;
-			} else if (start >= PHYS_SDRAM_2 && start <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE)) {
+			} else if (start >= phys_sdram_2_start && start <= ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size)) {
 				gd->bd->bi_dram[i].start = start;
 
-				if ((end + 1) <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE))
+				if ((end + 1) <= ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size))
 					gd->bd->bi_dram[i].size = end - start + 1;
 				else
-					gd->bd->bi_dram[i].size = ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE) - start;
+					gd->bd->bi_dram[i].size = ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size) - start;
 
 				dram_bank_sort(i);
 				i++;
@@ -1586,10 +1612,10 @@ int dram_init_banksize(void)
 
 	/* If error, set to the default value */
 	if (!i) {
-		gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
-		gd->bd->bi_dram[0].size = PHYS_SDRAM_1_SIZE;
-		gd->bd->bi_dram[1].start = PHYS_SDRAM_2;
-		gd->bd->bi_dram[1].size = PHYS_SDRAM_2_SIZE;
+		gd->bd->bi_dram[0].start = phys_sdram_1_start;
+		gd->bd->bi_dram[0].size = phys_sdram_1_size;
+		gd->bd->bi_dram[1].start = phys_sdram_2_start;
+		gd->bd->bi_dram[1].size = phys_sdram_2_size;
 	}
 
 	return 0;
@@ -1597,11 +1623,17 @@ int dram_init_banksize(void)
 
 static u64 get_block_attrs(sc_faddr_t addr_start)
 {
-	if ((addr_start >= PHYS_SDRAM_1 && addr_start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
-		|| (addr_start >= PHYS_SDRAM_2 && addr_start <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE)))
+	uint64_t phys_sdram_1_start, phys_sdram_1_size;
+	uint64_t phys_sdram_2_start, phys_sdram_2_size;
+
+	board_mem_get_layout(&phys_sdram_1_start, &phys_sdram_1_size,
+			     &phys_sdram_2_start, &phys_sdram_2_size);
 #ifdef CONFIG_IMX_TRUSTY_OS
 		return (PTE_BLOCK_MEMTYPE(MT_NORMAL) | PTE_BLOCK_INNER_SHARE);
 #else
+
+	if ((addr_start >= phys_sdram_1_start && addr_start <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size))
+		|| (addr_start >= phys_sdram_2_start && addr_start <= ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size)))
 		return (PTE_BLOCK_MEMTYPE(MT_NORMAL) | PTE_BLOCK_OUTER_SHARE);
 #endif
 
@@ -1610,14 +1642,20 @@ static u64 get_block_attrs(sc_faddr_t addr_start)
 
 static u64 get_block_size(sc_faddr_t addr_start, sc_faddr_t addr_end)
 {
-	if (addr_start >= PHYS_SDRAM_1 && addr_start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)) {
-		if ((addr_end + 1) > ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE))
-			return ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE) - addr_start;
+	uint64_t phys_sdram_1_start, phys_sdram_1_size;
+	uint64_t phys_sdram_2_start, phys_sdram_2_size;
 
-	} else if (addr_start >= PHYS_SDRAM_2 && addr_start <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE)) {
+	board_mem_get_layout(&phys_sdram_1_start, &phys_sdram_1_size,
+			     &phys_sdram_2_start, &phys_sdram_2_size);
 
-		if ((addr_end + 1) > ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE))
-			return ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE) - addr_start;
+	if (addr_start >= phys_sdram_1_start && addr_start <= ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size)) {
+		if ((addr_end + 1) > ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size))
+			return ((sc_faddr_t)phys_sdram_1_start + phys_sdram_1_size) - addr_start;
+
+	} else if (addr_start >= phys_sdram_2_start && addr_start <= ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size)) {
+
+		if ((addr_end + 1) > ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size))
+			return ((sc_faddr_t)phys_sdram_2_start + phys_sdram_2_size) - addr_start;
 	}
 
 	return (addr_end - addr_start + 1);

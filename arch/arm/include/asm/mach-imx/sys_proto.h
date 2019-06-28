@@ -137,6 +137,7 @@ void init_aips(void);
 void init_src(void);
 void imx_wdog_disable_powerdown(void);
 
+void board_mem_get_layout(uint64_t *phys_sdram_1_start, uint64_t *phys_sdram_1_size, uint64_t *phys_sdram_2_start, uint64_t *phys_sdram_2_size);
 int board_mmc_get_env_dev(int devno);
 
 int nxp_board_rev(void);
