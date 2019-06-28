@@ -100,6 +100,30 @@ static void board_gpio_init(void)
 }
 #endif
 
+void board_mem_get_layout(uint64_t *phys_sdram_1_start,
+			  uint64_t *phys_sdram_1_size,
+			  uint64_t *phys_sdram_2_start,
+			  uint64_t *phys_sdram_2_size)
+{
+	sc_ipc_t ipc = gd->arch.ipc_channel_handle;
+	uint32_t is_quadplus = 0, val = 0;
+	sc_err_t sciErr = sc_misc_otp_fuse_read(ipc, 6, &val);
+
+	if (sciErr == SC_ERR_NONE) {
+		/* QP has one A72 core disabled */
+		is_quadplus = (val >> 5) & 0x1;
+	}
+
+	*phys_sdram_1_start = PHYS_SDRAM_1;
+	*phys_sdram_1_size = PHYS_SDRAM_1_SIZE;
+	*phys_sdram_2_start = PHYS_SDRAM_2;
+	if (is_quadplus)
+		/* Our QP based SKUs only have 2 GB RAM (PHYS_SDRAM_1_SIZE) */
+		*phys_sdram_2_size = 0x0UL;
+	else
+		*phys_sdram_2_size = PHYS_SDRAM_2_SIZE;
+}
+
 int checkboard(void)
 {
 	puts("Board: Apalis iMX8\n");

@@ -131,6 +131,30 @@ static iomux_cfg_t usdhc1_sd[] = {
 	SC_P_USDHC1_VSELECT | MUX_PAD_CTRL(ESDHC_PAD_CTRL),
 };
 
+void board_mem_get_layout(uint64_t *phys_sdram_1_start,
+			  uint64_t *phys_sdram_1_size,
+			  uint64_t *phys_sdram_2_start,
+			  uint64_t *phys_sdram_2_size)
+{
+	sc_ipc_t ipc = gd->arch.ipc_channel_handle;
+	uint32_t is_dualx = 0, val = 0;
+	sc_err_t sciErr = sc_misc_otp_fuse_read(ipc, 6, &val);
+
+	if (sciErr == SC_ERR_NONE) {
+		/* DX has two A35 cores disabled */
+		is_dualx = (val >> 2) & 0x2;
+	}
+
+	*phys_sdram_1_start = PHYS_SDRAM_1;
+	if (is_dualx)
+		/* Our DX based SKUs only have 1 GB RAM */
+		*phys_sdram_1_size = SZ_1G;
+	else
+		*phys_sdram_1_size = PHYS_SDRAM_1_SIZE;
+	*phys_sdram_2_start = PHYS_SDRAM_2;
+	*phys_sdram_2_size = PHYS_SDRAM_2_SIZE;
+}
+
 int board_mmc_init(bd_t *bis)
 {
 	int i, ret;
