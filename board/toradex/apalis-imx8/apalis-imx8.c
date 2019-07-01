@@ -111,7 +111,7 @@ void board_mem_get_layout(uint64_t *phys_sdram_1_start,
 
 	if (sciErr == SC_ERR_NONE) {
 		/* QP has one A72 core disabled */
-		is_quadplus = (val >> 5) & 0x1;
+		is_quadplus = ((val >> 4) & 0x3) != 0x0;
 	}
 
 	*phys_sdram_1_start = PHYS_SDRAM_1;
