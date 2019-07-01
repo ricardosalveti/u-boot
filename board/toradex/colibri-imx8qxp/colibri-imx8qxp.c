@@ -142,7 +142,7 @@ void board_mem_get_layout(uint64_t *phys_sdram_1_start,
 
 	if (sciErr == SC_ERR_NONE) {
 		/* DX has two A35 cores disabled */
-		is_dualx = (val >> 2) & 0x2;
+		is_dualx = (val & 0xf) != 0x0;
 	}
 
 	*phys_sdram_1_start = PHYS_SDRAM_1;
