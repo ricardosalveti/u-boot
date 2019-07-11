@@ -72,7 +72,7 @@
 #define MEM_LAYOUT_ENV_SETTINGS \
 	"fdt_addr_r=0x84000000\0" \
 	"kernel_addr_r=0x82000000\0" \
-	"ramdisk_addr_r=0x94400000\0" \
+	"ramdisk_addr_r=0x86400000\0" \
 	"scriptaddr=0x87000000\0"
 
 /* Boot M4 */
