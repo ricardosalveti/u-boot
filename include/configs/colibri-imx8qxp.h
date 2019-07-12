@@ -70,32 +70,26 @@
 	"loadm4image_0=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${m4_0_image}\0" \
 	"m4boot_0=run loadm4image_0; dcache flush; bootaux ${loadaddr} 0\0" \
 
-#ifdef CONFIG_NAND_BOOT
-#define MFG_NAND_PARTITION "mtdparts=gpmi-nand:64m(boot),16m(kernel),16m(dtb),1m(misc),-(rootfs) "
+/* Enable Distro Boot */
+#ifndef CONFIG_SPL_BUILD
+#define BOOT_TARGET_DEVICES(func) \
+        func(MMC, mmc, 1) \
+        func(MMC, mmc, 0) \
+        func(USB, usb, 0) \
+        func(DHCP, dhcp, na)
+#include <config_distro_bootcmd.h>
+#undef CONFIG_ISO_PARTITION
 #else
-#define MFG_NAND_PARTITION ""
+#define BOOTENV
 #endif
-
-#define CONFIG_MFG_ENV_SETTINGS \
-	"mfgtool_args=setenv bootargs console=${console},${baudrate} " \
-		"rdinit=/linuxrc " \
-		"g_mass_storage.stall=0 g_mass_storage.removable=1 " \
-		"g_mass_storage.idVendor=0x066F g_mass_storage.idProduct=0x37FF "\
-		"g_mass_storage.iSerialNumber=\"\" "\
-		MFG_NAND_PARTITION \
-		"video=imxdpufb5:off video=imxdpufb6:off video=imxdpufb7:off " \
-		"clk_ignore_unused "\
-		"\0" \
-	"initrd_addr=0x83800000\0" \
-	"initrd_high=0xffffffff\0" \
-	"bootcmd_mfg=run mfgtool_args;booti ${loadaddr} ${initrd_addr} ${fdt_addr};\0" \
 
 /* Initial environment variables */
 #define CONFIG_EXTRA_ENV_SETTINGS		\
-	CONFIG_MFG_ENV_SETTINGS \
+	BOOTENV \
 	M4_BOOT_ENV \
 	AHAB_ENV \
 	MEM_LAYOUT_ENV_SETTINGS \
+	"bootcmd_mfg=source 0x82e00000\0" \
 	"script=boot.scr\0" \
 	"image=Image\0" \
 	"panel=NULL\0" \
@@ -186,6 +180,8 @@
 /* On Colibri iMX8X USDHC1 is eMMC and USDHC2 is 4-bit SD */
 #define CONFIG_MMCROOT			"/dev/mmcblk0p2"  /* USDHC1 eMMC */
 #define CONFIG_SYS_FSL_USDHC_NUM	2
+
+#define CONFIG_SYS_BOOTM_LEN		(64 << 20) /* Increase max gunzip size */
 
 /* Size of malloc() pool */
 #define CONFIG_SYS_MALLOC_LEN		((CONFIG_ENV_SIZE + (32*1024)) * 1024)
