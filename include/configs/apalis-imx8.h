@@ -103,7 +103,7 @@
 	BOOTENV \
 	M4_BOOT_ENV \
 	MEM_LAYOUT_ENV_SETTINGS \
-	"bootcmd_mfg=source 0x82e00000\0" \
+	"bootcmd_mfg=fastboot 0\0" \
 	"script=boot.scr\0" \
 	"image=Image\0" \
 	"panel=NULL\0" \
@@ -162,9 +162,6 @@
 		"fi;\0"
 
 #undef CONFIG_BOOTCOMMAND
-#ifdef CONFIG_TDX_EASY_INSTALLER
-#define CONFIG_BOOTCOMMAND "run distro_bootcmd"
-#else
 #define CONFIG_BOOTCOMMAND \
 	   "mmc dev ${mmcdev}; if mmc rescan; then " \
 		   "if run loadbootscript; then " \
@@ -176,7 +173,6 @@
 			   "fi; " \
 		   "fi; " \
 	   "else booti ${loadaddr} - ${fdt_addr}; fi"
-#endif
 
 /* Link Definitions */
 #define CONFIG_LOADADDR			0x80280000
