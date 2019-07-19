@@ -37,6 +37,8 @@
 #include <netdev.h>
 #include <libfdt.h>
 #include <cpu.h>
+#include <usb.h>
+#include <usb/ehci-ci.h>
 
 #include "../common/tdx-cfg-block.h"
 #ifdef CONFIG_TDX_CMD_IMX_MFGR
@@ -311,6 +313,21 @@ int board_ehci_power(int port, int on)
 		break;
 	}
 	return 0;
+}
+
+int board_usb_phy_mode(int port)
+{
+	switch (port) {
+	case 0:
+		if (gpio_get_value(IMX_GPIO_NR(7, 12)))
+			return USB_INIT_DEVICE;
+		else
+			return USB_INIT_HOST;
+	case 1:
+	default:
+		return USB_INIT_HOST;
+	}
+	return USB_INIT_HOST;
 }
 #endif
 
