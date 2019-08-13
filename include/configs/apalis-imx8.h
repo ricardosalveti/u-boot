@@ -99,7 +99,7 @@
 #endif
 
 /* Initial environment variables */
-#define CONFIG_EXTRA_ENV_SETTINGS		\
+#define CONFIG_EXTRA_ENV_SETTINGS \
 	BOOTENV \
 	M4_BOOT_ENV \
 	MEM_LAYOUT_ENV_SETTINGS \
@@ -108,11 +108,12 @@
 	"image=Image\0" \
 	"panel=NULL\0" \
 	"console=ttyLP1,115200 earlycon=lpuart32,0x5a070000,115200\0" \
-	"fdt_addr=0x83000000\0"			\
+	"fdt_addr=0x83000000\0"	\
 	"boot_fdt=try\0" \
 	"fdt_file=fsl-imx8qm-apalis.dtb\0" \
-	"initrd_addr=0x83800000\0"		\
+	"initrd_addr=0x83800000\0" \
 	"initrd_high=0xffffffffffffffff\0" \
+	"kernel_image=Image\0" \
 	"mmcdev="__stringify(CONFIG_SYS_MMC_ENV_DEV)"\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
@@ -122,57 +123,7 @@
 	"mmcautodetect=yes\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} root=${mmcroot} " \
 	"video=imxdpufb5:off video=imxdpufb6:off video=imxdpufb7:off\0" \
-	"loadbootscript=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
-	"bootscript=echo Running bootscript from mmc ...; " \
-		"source\0" \
-	"loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}\0" \
-	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
-	"mmcboot=echo Booting from mmc ...; " \
-		"run mmcargs; " \
-		"run loadhdp; hdp load ${hdp_addr}; " \
-		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-			"if run loadfdt; then " \
-				"booti ${loadaddr} - ${fdt_addr}; " \
-			"else " \
-				"echo WARN: Cannot load the DT; " \
-			"fi; " \
-		"else " \
-			"echo wait for boot; " \
-		"fi;\0" \
-	"netargs=setenv bootargs console=${console} " \
-		"root=/dev/nfs " \
-		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp " \
-		"video=imxdpufb5:off video=imxdpufb6:off video=imxdpufb7:off\0" \
-	"netboot=echo Booting from net ...; " \
-		"run netargs;  " \
-		"if test ${ip_dyn} = yes; then " \
-			"setenv get_cmd dhcp; " \
-		"else " \
-			"setenv get_cmd tftp; " \
-		"fi; " \
-		"${get_cmd} ${loadaddr} ${image}; " \
-		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-			"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
-				"booti ${loadaddr} - ${fdt_addr}; " \
-			"else " \
-				"echo WARN: Cannot load the DT; " \
-			"fi; " \
-		"else " \
-			"booti; " \
-		"fi;\0"
-
-#undef CONFIG_BOOTCOMMAND
-#define CONFIG_BOOTCOMMAND \
-	   "mmc dev ${mmcdev}; if mmc rescan; then " \
-		   "if run loadbootscript; then " \
-			   "run bootscript; " \
-		   "else " \
-			   "if run loadimage; then " \
-				   "run mmcboot; " \
-			   "else run netboot; " \
-			   "fi; " \
-		   "fi; " \
-	   "else booti ${loadaddr} - ${fdt_addr}; fi"
+	"setup=run loadhdp; hdp load ${hdp_addr}; run mmcargs\0"
 
 /* Link Definitions */
 #define CONFIG_LOADADDR			0x80280000
