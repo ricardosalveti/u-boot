@@ -1055,6 +1055,12 @@ config TEGRA
 	imply DISTRO_DEFAULTS
 	imply FAT_WRITE
 
+config TARGET_DESIGNSTART_A5
+	bool "Support designstart A5"
+	select CPU_V7A
+	select SEMIHOSTING
+	select PL01X_SERIAL
+
 config TARGET_VEXPRESS64_AEMV8A
 	bool "Support vexpress_aemv8a"
 	select ARM64
