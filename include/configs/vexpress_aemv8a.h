@@ -23,13 +23,19 @@
 #define HIGH_ADDR			"0xffffffff"
 #define BOOT_TYPE			"bootz"
 #define CONFIG_SYS_HZ_CLOCK		24000000
+#ifdef CONFIG_TARGET_DESIGNSTART_A5
+#define CONFIG_SYS_MMIO_TIMER
+#else
 #define CONFIG_SYS_ARCH_TIMER
+#endif
 #define CONFIG_SKIP_LOWLEVEL_INIT
 #endif
 
+
 /* Link Definitions */
 #if defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP) || \
-	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_AARCH32)
+	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_AARCH32) ||	\
+	defined(CONFIG_TARGET_DESIGNSTART_A5)
 /* ATF loads u-boot here for BASE_FVP model */
 #define CONFIG_SYS_TEXT_BASE		0x88000000
 #define CONFIG_SYS_INIT_SP_ADDR         (CONFIG_SYS_SDRAM_BASE + 0x03f00000)
@@ -66,6 +72,9 @@
 	defined(CONFIG_TARGET_VEXPRESS64_JUNO_AARCH32)
 #define V2M_UART0			0x7ff80000
 #define V2M_UART1			0x7ff70000
+#elif defined(CONFIG_TARGET_DESIGNSTART_A5)
+#define V2M_UART0			0x001a200000
+#define V2M_UART1			0x001a210000
 #else /* Not Juno */
 #define V2M_UART0			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(9))
 #define V2M_UART1			(V2M_PA_CS3 + V2M_PERIPH_OFFSET(10))
@@ -121,7 +130,7 @@
 #define CONFIG_SMC911X			1
 #define CONFIG_SMC911X_32_BIT		1
 #define CONFIG_SMC911X_BASE		(0x018000000)
-#else
+#elif !defined(CONFIG_TARGET_DESIGNSTART_A5)
 /* The Vexpress64 simulators use SMSC91C111 */
 #define CONFIG_SMC91111			1
 #define CONFIG_SMC91111_BASE		(0x01A000000)
@@ -222,9 +231,9 @@
 				"setenv bootargs ${bootargs} ${bootargs_sky2}; "\
 				BOOT_TYPE " ${kernel_addr} ${initrd_param} ${fdt_addr}"
 
-
-#elif defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP) || \
-	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_AARCH32)
+#elif defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP) ||		\
+	defined(CONFIG_TARGET_VEXPRESS64_BASE_FVP_AARCH32) ||	\
+	defined(CONFIG_TARGET_DESIGNSTART_A5)
 #define CONFIG_EXTRA_ENV_SETTINGS	\
 				"kernel_name=Image\0"		\
 				"kernel_addr=0x80080000\0"	\
@@ -235,6 +244,13 @@
 				"fdt_high=" HIGH_ADDR "\0"	\
 				"initrd_high=" HIGH_ADDR "\0"
 
+#if defined(CONFIG_TARGET_DESIGNSTART_A5)
+#define CONFIG_BOOTARGS		"console=ttyAMA0 earlycon=pl011,"\
+				"0x1a200000 "\
+				"systemd.log_target=null "\
+				"root=/dev/ram0 rw rootwait"\
+				"loglevel=9"
+#else
 #define CONFIG_BOOTARGS		"console=ttyAMA0 earlycon=pl011,"\
 				"0x1c090000 debug user_debug=31 "\
 				"systemd.log_target=null "\
@@ -242,7 +258,14 @@
 				"root=/dev/vda2 rw "\
 				"rootwait "\
 				"loglevel=9"
+#endif
 
+#if defined(CONFIG_TARGET_DESIGNSTART_A5)
+#define CONFIG_BOOTCOMMAND	"echo copy to RAM...; " \
+				"cp.b 0x08100000 $kernel_addr 0xB00000; " \
+				"cp.b 0x08D00000 $initrd_addr 0x500000; " \
+				BOOT_TYPE " $kernel_addr $initrd_addr $fdt_addr"
+#else
 #define CONFIG_BOOTCOMMAND	"if smhload ${fdt_name} ${fdt_addr}; then "\
 				"  if smhload ${initrd_name} ${initrd_addr} "\
 				"  initrd_end; then " \
@@ -263,6 +286,7 @@
 				"with contents of DRAM; " \
 				BOOT_TYPE " $kernel_addr $initrd_addr $fdt_addr"
 #endif
+#endif
 
 /* Monitor Command Prompt */
 #define CONFIG_SYS_CBSIZE		512	/* Console I/O Buffer Size */
@@ -282,6 +306,13 @@
 /* in the Juno firmware. */
 #define CONFIG_ENV_ADDR			0x0BFC0000
 #define CONFIG_ENV_SECT_SIZE		0x00010000
+#elif defined(CONFIG_TARGET_DESIGNSTART_A5)
+#define CONFIG_SYS_FLASH_BASE		0x08000000
+/* 256 x 256KiB sectors */
+#define CONFIG_SYS_MAX_FLASH_SECT	256
+/* Store environment at top of flash */
+#define CONFIG_ENV_ADDR			0x0A7C0000
+#define CONFIG_ENV_SECT_SIZE		0x00040000
 #else
 #define CONFIG_SYS_FLASH_BASE		0x0C000000
 /* 256 x 256KiB sectors */
