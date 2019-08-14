@@ -738,6 +738,11 @@ config TEGRA
 	bool "NVIDIA Tegra"
 	imply FAT_WRITE
 
+config TARGET_DESIGNSTART_A5
+	bool "Support designstart A5"
+	select CPU_V7
+	select SEMIHOSTING
+
 config TARGET_VEXPRESS64_AEMV8A
 	bool "Support vexpress_aemv8a"
 	select ARM64
