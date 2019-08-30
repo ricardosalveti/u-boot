@@ -426,6 +426,7 @@ int image_decomp(int comp, ulong load, ulong image_start, int type,
 		else
 			ret = -ENOSPC;
 		break;
+#ifndef USE_HOSTCC
 #ifdef CONFIG_GZIP
 	case IH_COMP_GZIP: {
 		ret = gunzip(load_buf, unc_len, image_buf, &image_len);
@@ -476,6 +477,7 @@ int image_decomp(int comp, ulong load, ulong image_start, int type,
 		break;
 	}
 #endif /* CONFIG_LZ4 */
+#endif
 	default:
 		printf("Unimplemented compression type %d\n", comp);
 		return -ENOSYS;
