@@ -482,6 +482,7 @@ dtb-$(CONFIG_ARCH_IMX8) += fsl-imx8dx-17x17-val.dtb \
 		fsl-imx8qxp-lpddr4-arm2.dtb \
 		fsl-imx8qxp-mek.dtb \
 		fsl-imx8qm-apalis.dtb \
+		fsl-imx8qxp-apalis.dtb \
 		fsl-imx8qxp-colibri.dtb
 
 
