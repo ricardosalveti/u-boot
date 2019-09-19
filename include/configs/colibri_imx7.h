@@ -70,7 +70,9 @@
 	"fdt_high=0xffffffff\0" \
 	"initrd_high=0xffffffff\0" \
 	"kernel_addr_r=0x81000000\0" \
-	"ramdisk_addr_r=0x82100000\0"
+	"pxefile_addr_r=0x87100000\0" \
+	"ramdisk_addr_r=0x82100000\0" \
+	"scriptaddr=0x87000000\0"
 
 #if defined(CONFIG_TARGET_COLIBRI_IMX7_NAND)
 #define SD_BOOTDEV 0
