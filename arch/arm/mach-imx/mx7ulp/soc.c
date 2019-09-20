@@ -11,6 +11,7 @@
 #include <asm/mach-imx/boot_mode.h>
 #include <asm/mach-imx/hab.h>
 #include <fdt_support.h>
+#include <asm/setup.h>
 
 static char *get_reset_cause(char *);
 
@@ -379,3 +380,15 @@ enum boot_device get_boot_device(void)
 
 	return boot_dev;
 }
+
+#ifdef CONFIG_SERIAL_TAG
+void get_board_serial(struct tag_serialnr *serialnr)
+{
+	struct ocotp_regs *ocotp = (struct ocotp_regs *)OCOTP_BASE_ADDR;
+	struct fuse_bank *bank = &ocotp->bank[1];
+	struct fuse_bank1_regs *fuse =
+		(struct fuse_bank1_regs *)bank->fuse_regs;
+	serialnr->low = (fuse->cfg0 & 0xFFFF) + ((fuse->cfg1 & 0xFFFF) << 16);
+	serialnr->high = (fuse->cfg2 & 0xFFFF) + ((fuse->cfg3 & 0xFFFF) << 16);
+}
+#endif /* CONFIG_SERIAL_TAG */
