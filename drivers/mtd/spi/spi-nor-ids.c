@@ -67,6 +67,7 @@ const struct flash_info spi_nor_ids[] = {
 	/* Atmel -- some are (confusingly) marketed as "DataFlash" */
 	{ INFO("at26df321",	0x1f4700, 0, 64 * 1024, 64, SECT_4K) },
 	{ INFO("at25df321a",	0x1f4701, 0, 64 * 1024, 64, SECT_4K) },
+	{ INFO("at25sl321",	0x1f4216, 0, 64 * 1024, 64, SECT_4K) },
 
 	{ INFO("at45db011d",	0x1f2200, 0, 64 * 1024,   4, SECT_4K) },
 	{ INFO("at45db021d",	0x1f2300, 0, 64 * 1024,   8, SECT_4K) },
