@@ -27,8 +27,13 @@ config TARGET_MX7ULP_EVK
 	select MX7ULP
 	select SYS_ARCH_TIMER
 
+config TARGET_MX7ULPEA_UCOM
+	bool "Support EA mx7ulp uCOM board"
+	select MX7ULP
+
 endchoice
 
 source "board/freescale/mx7ulp_evk/Kconfig"
+source "board/embeddedartists/mx7ulpea-ucom/Kconfig"
 
 endif
