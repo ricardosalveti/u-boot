@@ -100,6 +100,7 @@
 	NFS_BOOTCMD \
 	SD_BOOTCMD \
 	UBI_BOOTCMD \
+	"bootubipart=ubi\0" \
 	"console=ttymxc0\0" \
 	"defargs=user_debug=30\0" \
 	"dfu_alt_info=" DFU_ALT_NAND_INFO "\0" \
