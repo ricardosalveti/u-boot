@@ -1,0 +1,8 @@
+Verdin iMX8MM
+M:	Igor Opaniuk <igor.opaniuk@toradex.com>
+W:	http://developer.toradex.com/software/linux/linux-software
+S:	Maintained
+F:	arch/arm/dts/fsl-imx8mm-verdin.dts
+F:	board/toradex/verdin-imx8mm/
+F:	configs/verdin-imx8mm_defconfig
+F:	include/configs/verdin-imx8mm.h
