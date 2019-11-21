@@ -113,6 +113,7 @@
 	"panel=NULL\0" \
 	"console=ttyLP1,115200 earlycon=lpuart32,0x5a070000,115200\0" \
 	"fdt_addr=0x83000000\0"	\
+	"fdt_high=\0" \
 	"boot_fdt=try\0" \
 	"fdt_file=" FDT_FILE "\0" \
 	"fdtfile=" FDT_FILE "\0" \
