@@ -48,17 +48,17 @@ choice
 	optional
 
 config TARGET_APALIS_IMX8
-	bool "Support Apalis iMX8"
+	bool "Support Toradex Apalis iMX8 module"
 	select BOARD_LATE_INIT
 	select IMX8QM
 
 config TARGET_APALIS_IMX8QXP
-	bool "Support Apalis iMX8QXP"
+	bool "Support Toradex Apalis iMX8X module"
 	select BOARD_LATE_INIT
 	select IMX8QXP
 
 config TARGET_COLIBRI_IMX8QXP
-	bool "Support Colibri iMX8QXP"
+	bool "Support Toradex Colibri iMX8X module"
 	select BOARD_LATE_INIT
 	select IMX8QXP
 
