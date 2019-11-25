@@ -48,7 +48,7 @@ choice
 	optional
 
 config TARGET_APALIS_IMX8
-	bool "Support Apalis i.MX8"
+	bool "Support Apalis iMX8"
 	select BOARD_LATE_INIT
 	select IMX8QM
 
