@@ -10,7 +10,8 @@
 	defined(CONFIG_TARGET_APALIS_IMX8) || \
 	defined(CONFIG_TARGET_APALIS_IMX8QXP) || \
 	defined(CONFIG_TARGET_COLIBRI_IMX6) || \
-	defined(CONFIG_TARGET_COLIBRI_IMX8QXP)
+	defined(CONFIG_TARGET_COLIBRI_IMX8QXP) || \
+	defined(CONFIG_TARGET_VERDIN_IMX8MM)
 #include <asm/arch/sys_proto.h>
 #else
 #define is_cpu_type(cpu) (0)
@@ -114,6 +115,7 @@ const char * const toradex_modules[] = {
 	[52] = "Colibri iMX8 DualX 1GB",
 	[53] = "Apalis iMX8 QuadXPlus 2GB ECC IT",
 	[54] = "Apalis iMX8 DualXPlus 1GB",
+	[55] = "Verdin iMX8M Mini 2GB Wi-Fi / BT IT",
 };
 
 const char * const toradex_prototype_modules[] = {
@@ -319,12 +321,20 @@ static int get_cfgblock_interactive(void)
 	/* Unknown module by default */
 	tdx_hw_tag.prodid = 0;
 
-	if (cpu_is_pxa27x())
+	if (cpu_is_pxa27x()) {
 		sprintf(message, "Is the module the 312 MHz version? [y/N] ");
-	else
+	}
+#if !defined(CONFIG_TARGET_VERDIN_IMX8MM)
+	else {
 		sprintf(message, "Is the module an IT version? [y/N] ");
+	}
 	len = cli_readline(message);
 	it = console_buffer[0];
+#else
+	else {
+		it = 'y';
+	}
+#endif
 
 #if defined(CONFIG_TARGET_APALIS_IMX8) || \
 		defined(CONFIG_TARGET_APALIS_IMX8QXP) || \
@@ -392,6 +402,8 @@ static int get_cfgblock_interactive(void)
 		tdx_hw_tag.prodid = COLIBRI_IMX7D;
 	else if (!strcmp("imx7s", soc))
 		tdx_hw_tag.prodid = COLIBRI_IMX7S;
+	else if (is_cpu_type(MXC_CPU_IMX8MM))
+		tdx_hw_tag.prodid = VERDIN_IMX8MM;
 	else if (is_cpu_type(MXC_CPU_IMX8QM)) {
 		if (it == 'y' || it == 'Y') {
 			if (wb == 'y' || wb == 'Y')
