@@ -329,7 +329,7 @@ static int get_cfgblock_interactive(void)
 #if defined(CONFIG_TARGET_APALIS_IMX8) || \
 		defined(CONFIG_TARGET_APALIS_IMX8QXP) || \
 		defined(CONFIG_TARGET_COLIBRI_IMX6ULL) || \
-		defined(CONFIG_TARGET_COLIBRI_IMX8X)
+		defined(CONFIG_TARGET_COLIBRI_IMX8QXP)
 	sprintf(message, "Does the module have Wi-Fi / Bluetooth? " \
 			 "[y/N] ");
 	len = cli_readline(message);
@@ -337,7 +337,7 @@ static int get_cfgblock_interactive(void)
 #endif
 
 #if defined(CONFIG_TARGET_APALIS_IMX8QXP) || \
-		defined(CONFIG_TARGET_COLIBRI_IMX8X)
+		defined(CONFIG_TARGET_COLIBRI_IMX8QXP)
 	sprintf(message, "Is the module family type Apalis (A) or Colibri (C)? " \
 			 "[A/C] ");
 	len = cli_readline(message);
