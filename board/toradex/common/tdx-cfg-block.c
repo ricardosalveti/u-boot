@@ -482,10 +482,10 @@ static int get_cfgblock_interactive(void)
 		return -1;
 	}
 
-	while (len < 4) {
+	do {
 		sprintf(message, "Enter the module version (e.g. V1.1B): V");
 		len = cli_readline(message);
-	}
+	} while (len < 4);
 
 	tdx_hw_tag.ver_major = console_buffer[0] - '0';
 	tdx_hw_tag.ver_minor = console_buffer[2] - '0';
