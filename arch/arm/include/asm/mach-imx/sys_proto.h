@@ -99,6 +99,13 @@ void gpr_init(void);
 
 #endif /* CONFIG_MX6 */
 
+/* address translation table */
+struct rproc_att {
+	u32 da; /* device address (From Cortex M4 view) */
+	u32 sa; /* system bus address */
+	u32 size; /* size of reg range */
+};
+
 u32 get_nr_cpus(void);
 u32 get_cpu_rev(void);
 u32 get_cpu_speed_grade_hz(void);
