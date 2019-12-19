@@ -52,6 +52,9 @@
 /* ENET Config */
 #define CONFIG_MII
 
+/* We have a slow phy... */
+#define PHY_ANEG_TIMEOUT		15000
+
 #define CONFIG_FEC_MXC
 #define CONFIG_FEC_XCV_TYPE		RGMII
 #define FEC_QUIRK_ENET_MAC
