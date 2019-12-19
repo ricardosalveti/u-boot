@@ -65,7 +65,7 @@ int arch_misc_init(void)
 			"console=${console},${baudrate}n8 ${memargs}");
 		setenv("teziargs", "rootfstype=squashfs root=/dev/ram quiet " \
 			"autoinstall");
-		setenv("vidargs", "video=HDMI-A-1:640x480-16@60 hotplugfb");
+		setenv("vidargs", "video=HDMI-A-1:640x480-16@60D video=LVDS-1:640x480-16@60D");
 		setenv("bootcmd", "run setup; setenv bootargs ${defargs} " \
 			"${setupargs} ${vidargs} ${teziargs}; " \
 			"bootm 0x80208000");
