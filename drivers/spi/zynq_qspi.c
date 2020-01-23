@@ -222,6 +222,21 @@ static void zynq_qspi_init_hw(struct zynq_qspi_priv *priv)
 	writel(ZYNQ_QSPI_ENR_SPI_EN_MASK, &regs->enr);
 }
 
+static int zynq_qspi_child_pre_probe(struct udevice *bus)
+{
+	struct spi_slave *slave = dev_get_parent_priv(bus);
+	struct zynq_qspi_priv *priv = dev_get_priv(bus->parent);
+	struct zynq_qspi_platdata *plat = dev_get_platdata(bus->parent);
+
+	slave->option = priv->is_dual;
+	slave->dio = priv->is_dio;
+	slave->mode = plat->tx_rx_mode;
+#ifdef CONFIG_SPI_FLASH_SPLIT_READ
+	slave->multi_die = 1;
+#endif
+	return 0;
+}
+
 static int zynq_qspi_probe(struct udevice *bus)
 {
 	struct zynq_qspi_plat *plat = dev_get_plat(bus);
@@ -771,4 +786,5 @@ U_BOOT_DRIVER(zynq_qspi) = {
 	.plat_auto	= sizeof(struct zynq_qspi_plat),
 	.priv_auto	= sizeof(struct zynq_qspi_priv),
 	.probe  = zynq_qspi_probe,
+	.child_pre_probe = zynq_qspi_child_pre_probe,
 };
