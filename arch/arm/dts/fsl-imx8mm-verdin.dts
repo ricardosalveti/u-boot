@@ -105,8 +105,6 @@
 	phy-mode = "rgmii";
 	phy-supply = <&reg_ethphy>;
 	fsl,magic-packet;
-	fsl,rgmii_rxc_dly;
-	fsl,rgmii_txc_dly;
 	status = "okay";
 
 	mdio {
