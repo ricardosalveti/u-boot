@@ -23,13 +23,16 @@
 
 		reg_ethphy: regulator-ethphy {
 			compatible = "regulator-fixed";
+			enable-active-high;
+			gpio = <&gpio2 20 GPIO_ACTIVE_HIGH>;
+			off-on-delay = <500000>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_reg_eth>;
+			regulator-boot-on;
 			regulator-name = "V3.3_ETH";
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
-			gpio = <&gpio2 20 GPIO_ACTIVE_HIGH>;
-			enable-active-high;
+			startup-delay-us = <200000>;
 		};
 
 		reg_usdhc2_vmmc: regulator-usdhc2 {
