@@ -35,6 +35,7 @@
 #define IMX_FEC_BASE			0x5B040000
 #define CONFIG_FEC_MXC_PHYADDR		4
 #define CONFIG_ETHPRIME			"eth0"
+#define FEC_ENET_ENABLE_TXC_DELAY
 
 /* We have a slow phy... */
 #define PHY_ANEG_TIMEOUT		15000
