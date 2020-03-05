@@ -76,14 +76,9 @@
 #undef CONFIG_SERVERIP
 #define CONFIG_SERVERIP		192.168.10.1
 
-#ifdef CONFIG_TDX_EASY_INSTALLER
-#define CONFIG_BOOTCOMMAND \
-	"run distro_bootcmd"
-#else
 #define CONFIG_BOOTCOMMAND \
 	"run emmcboot; setenv fdtfile ${soc}-${fdt_module}-${fdt_board}.dtb && " \
 		"run distro_bootcmd"
-#endif
 
 #define DFU_ALT_EMMC_INFO	"apalis-tk1.img raw 0x0 0x500 mmcpart 1; " \
 				"boot part 0 1 mmcpart 0; " \

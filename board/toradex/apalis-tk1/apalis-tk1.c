@@ -48,7 +48,7 @@ int arch_misc_init(void)
 		setenv("vidargs", "video=HDMI-A-1:640x480-16@60 hotplugfb");
 		setenv("bootcmd", "run setup; setenv bootargs ${defargs} " \
 			"${setupargs} ${vidargs} ${teziargs}; " \
-			"bootm 0x80208000#config@${fdt_module}");
+			"bootm 0x80208000#config@${soc}-${fdt_module}-${fdt_board}.dtb");
 #else /* CONFIG_TDX_EASY_INSTALLER */
 		setenv("bootdelay", "-1");
 #endif /* CONFIG_TDX_EASY_INSTALLER */

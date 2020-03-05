@@ -110,7 +110,7 @@
 		"${teziargs}; echo Booting Toradex Easy Installer...; " \
 		"ubi part ubi && " \
 		"ubi read ${ramdisk_addr_r} rootfs && " \
-		"bootm ${ramdisk_addr_r}#config@${soc}\0"
+		"bootm ${ramdisk_addr_r}#config@${soc}-colibri${variant}-${fdt_board}.dtb\0"
 #else /* CONFIG_TDX_EASY_INSTALLER */
 #define UBI_BOOTCMD \
 	"ubiargs=ubi.mtd=ubi root=ubi0:rootfs rw rootfstype=ubifs " \
@@ -125,11 +125,11 @@
 #endif /* CONFIG_TDX_EASY_INSTALLER */
 
 #ifdef CONFIG_TDX_EASY_INSTALLER
-#define CONFIG_BOOTCOMMAND "setenv fdtfile ${soc}-colibri-${fdt_board}.dtb && " \
+#define CONFIG_BOOTCOMMAND "setenv fdtfile ${soc}-colibri${variant}-${fdt_board}.dtb && " \
 	"run bootcmd_mmc0; run ubiboot; run distro_bootcmd"
 #else
 #define CONFIG_BOOTCOMMAND "run ubiboot; " \
-	"setenv fdtfile ${soc}-colibri-${fdt_board}.dtb && run distro_bootcmd"
+	"setenv fdtfile ${soc}-colibri${variant}-${fdt_board}.dtb && run distro_bootcmd"
 #endif
 
 #define BOOTENV_RUN_NET_USB_START ""
