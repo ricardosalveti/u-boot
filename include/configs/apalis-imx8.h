@@ -104,7 +104,8 @@
 
 #define CONFIG_SKIP_RESOURCE_CHECING
 
-#define FDT_FILE			"fsl-imx8qm-apalis-eval.dtb"
+#define FDT_FILE			"fsl-imx8qm-apalis-v1.1-eval.dtb"
+#define FDT_FILE_V1_0			"fsl-imx8qm-apalis-eval.dtb"
 
 /* Initial environment variables */
 #define CONFIG_EXTRA_ENV_SETTINGS \

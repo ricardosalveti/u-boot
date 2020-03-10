@@ -43,6 +43,27 @@ DECLARE_GLOBAL_DATA_PTR;
 #define UART_PAD_CTRL	((SC_PAD_CONFIG_OUT_IN << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) \
 						| (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
 
+#define PCB_VERS_DETECT		((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) | \
+				 (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT) | (SC_PAD_28FDSOI_PS_PU << PADRING_PULL_SHIFT))
+
+#define PCB_VERS_DEFAULT	((SC_PAD_CONFIG_NORMAL << PADRING_CONFIG_SHIFT) | (SC_PAD_ISO_OFF << PADRING_LPCONFIG_SHIFT) | \
+				 (SC_PAD_28FDSOI_PS_PD << PADRING_PULL_SHIFT) | (SC_PAD_28FDSOI_DSE_DV_HIGH << PADRING_DSE_SHIFT))
+
+typedef enum {
+	PCB_VERSION_1_0,
+	PCB_VERSION_1_1
+} pcb_rev_t;
+
+static iomux_cfg_t pcb_vers_detect[] = {
+	SC_P_MIPI_DSI0_GPIO0_00 | MUX_MODE_ALT(3) | MUX_PAD_CTRL(PCB_VERS_DETECT),
+	SC_P_MIPI_DSI0_GPIO0_01 | MUX_MODE_ALT(3) | MUX_PAD_CTRL(PCB_VERS_DETECT),
+};
+
+static iomux_cfg_t pcb_vers_default[] = {
+	SC_P_MIPI_DSI0_GPIO0_00 | MUX_MODE_ALT(3) | MUX_PAD_CTRL(PCB_VERS_DEFAULT),
+	SC_P_MIPI_DSI0_GPIO0_01 | MUX_MODE_ALT(3) | MUX_PAD_CTRL(PCB_VERS_DEFAULT),
+};
+
 static iomux_cfg_t uart1_pads[] = {
 	SC_P_UART1_RX | MUX_PAD_CTRL(UART_PAD_CTRL),
 	SC_P_UART1_TX | MUX_PAD_CTRL(UART_PAD_CTRL),
@@ -278,6 +299,62 @@ void board_late_mmc_env_init(void)
 	run_command(cmd, 0);
 }
 
+static pcb_rev_t get_pcb_revision(void)
+{
+	unsigned int pcb_vers = 0;
+
+	imx8_iomux_setup_multiple_pads(pcb_vers_detect,
+				       ARRAY_SIZE(pcb_vers_detect));
+
+	gpio_request(IMX_GPIO_NR(1, 18), \
+		     "PCB version detection on PAD SC_P_MIPI_DSI0_GPIO0_00");
+	gpio_request(IMX_GPIO_NR(1, 19), \
+		     "PCB version detection on PAD SC_P_MIPI_DSI0_GPIO0_01");
+	gpio_direction_input(IMX_GPIO_NR(1, 18));
+	gpio_direction_input(IMX_GPIO_NR(1, 19));
+
+	udelay(1000);
+
+	pcb_vers = gpio_get_value(IMX_GPIO_NR(1, 18));
+	pcb_vers |= gpio_get_value(IMX_GPIO_NR(1, 19)) << 1;
+
+	/* Set muxing back to default values for saving energy */
+	imx8_iomux_setup_multiple_pads(pcb_vers_default,
+				       ARRAY_SIZE(pcb_vers_default));
+
+	switch(pcb_vers) {
+		case 0b11:
+			return PCB_VERSION_1_0;
+			break;
+		case 0b10:
+			return PCB_VERSION_1_1;
+			break;
+		default:
+			return -ENODEV;
+			break;
+	}
+}
+
+static int select_dt_from_module_version(void)
+{
+	char *fdt_env = env_get("fdtfile");
+
+	switch(get_pcb_revision()) {
+		case PCB_VERSION_1_0:
+			if (strcmp(FDT_FILE_V1_0, fdt_env)) {
+				env_set("fdtfile", FDT_FILE_V1_0);
+				printf("Detected a V1.0 module, setting " \
+					"correct devicetree\n");
+#ifndef CONFIG_ENV_IS_NOWHERE
+				env_save();
+#endif
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 int board_late_init(void)
 {
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
@@ -313,6 +390,8 @@ int board_late_init(void)
 			IMX_HDMI_FIRMWARE_LOAD_ADDR + IMX_HDMITX_FIRMWARE_SIZE);
 	run_command(command, 0);
 #endif
+
+	select_dt_from_module_version();
 
 	return 0;
 }
