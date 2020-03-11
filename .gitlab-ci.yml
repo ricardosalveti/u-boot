@@ -9,7 +9,7 @@ variables:
 stages:
   - build-uboot
 
-build_kernel:
+build_u-boot:
   stage: build-uboot
   image: $CI_IMAGE
   variables:
