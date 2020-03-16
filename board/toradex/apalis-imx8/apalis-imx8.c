@@ -335,7 +335,7 @@ static pcb_rev_t get_pcb_revision(void)
 	}
 }
 
-static int select_dt_from_module_version(void)
+static void select_dt_from_module_version(void)
 {
 	char *fdt_env = env_get("fdtfile");
 
@@ -354,6 +354,17 @@ static int select_dt_from_module_version(void)
 			break;
 	}
 }
+
+static int do_select_dt_from_module_version(cmd_tbl_t *cmdtp, int flag, int argc,
+		       char * const argv[]) {
+	select_dt_from_module_version();
+	return 0;
+}
+
+U_BOOT_CMD(
+	select_dt_from_module_version, CONFIG_SYS_MAXARGS, 1, do_select_dt_from_module_version,
+	"\n", "    - select devicetree from module version"
+);
 
 int board_late_init(void)
 {

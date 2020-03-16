@@ -112,7 +112,7 @@
 	BOOTENV \
 	M4_BOOT_ENV \
 	MEM_LAYOUT_ENV_SETTINGS \
-	"bootcmd_mfg=fastboot 0\0" \
+	"bootcmd_mfg=select_dt_from_module_version && fastboot 0\0" \
 	"script=boot.scr\0" \
 	"image=Image\0" \
 	"panel=NULL\0" \
