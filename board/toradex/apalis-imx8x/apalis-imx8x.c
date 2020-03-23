@@ -18,6 +18,7 @@
 #include <asm/arch/clock.h>
 #include <asm/mach-imx/sci/sci.h>
 #include <asm/arch/imx8-pins.h>
+#include <asm/arch/snvs_security_sc.h>
 #include <dm.h>
 #include <imx8_hsio.h>
 #include <usb.h>
@@ -323,6 +324,14 @@ int board_init(void)
 	board_gpio_init();
 #endif
 
+#ifdef CONFIG_SNVS_SEC_SC_AUTO
+	{
+		int ret = snvs_security_sc_init();
+
+		if (ret)
+			return ret;
+	}
+#endif
 	return 0;
 }
 
