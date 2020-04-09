@@ -280,6 +280,10 @@
 	status = "okay";
 };
 
+&usb2 {
+	status = "okay";
+};
+
 /* On-module eMMC */
 &usdhc1 {
 	bus-width = <8>;
