@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
  * Copyright 2022-2023 NXP
+ * Copyright 2020 Foundries.io
  */
 
 &{/aliases} {
@@ -16,5 +17,15 @@
 };
 
 &rngb {
+	bootph-all;
+};
+
+&{/soc} {
+	bootph-pre-ram;
+	bootph-all;
+};
+
+&aips3 {
+	bootph-pre-ram;
 	bootph-all;
 };
