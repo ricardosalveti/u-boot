@@ -32,11 +32,13 @@ u32 get_board_rev(void)
 #endif /* CONFIG_TDX_CFG_BLOCK */
 
 #ifdef CONFIG_SERIAL_TAG
-void get_board_serial(struct tag_serialnr *serialnr)
+void __weak get_board_serial(struct tag_serialnr *serialnr)
 {
 	int array[8];
 	unsigned int serial = tdx_serial;
 	int i;
+
+	printf("TORADEX get_board_serial\n");
 
 	serialnr->low = 0;
 	serialnr->high = 0;
