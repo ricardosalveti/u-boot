@@ -590,7 +590,8 @@ int board_spl_fit_post_load(const void *fit, struct spl_image_info *spl_image)
 	return 0;
 }
 
-#if defined(CONFIG_MX6) && defined(CONFIG_SPL_OS_BOOT)
+#if defined(CONFIG_MX6) && (defined(CONFIG_SPL_OS_BOOT) || \
+		defined(CONFIG_SPL_ATF) || defined(CONFIG_SPL_OPTEE))
 int dram_init_banksize(void)
 {
 	gd->bd->bi_dram[0].start = CFG_SYS_SDRAM_BASE;
