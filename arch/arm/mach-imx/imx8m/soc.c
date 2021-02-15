@@ -814,6 +814,12 @@ int boot_mode_getprisec(void)
 {
 	return !!imx8m_detect_secondary_image_boot();
 }
+#else
+int boot_mode_getprisec(void)
+{
+	struct src *psrc = (struct src *)SRC_BASE_ADDR;
+	return !!(readl(&psrc->gpr10) & SRC_GPR10_PERSIST_SECONDARY_BOOT);
+}
 #endif
 
 #if defined(CONFIG_IMX8MN) || defined(CONFIG_IMX8MP)
@@ -852,6 +858,17 @@ unsigned long arch_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
 	return raw_sect;
 }
 #endif
+
+void boot_mode_enable_secondary(bool enable)
+{
+	u32 persist_sec = SRC_GPR10_PERSIST_SECONDARY_BOOT;
+	struct src *psrc = (struct src *)SRC_BASE_ADDR;
+
+	if (enable)
+		setbits_le32(&psrc->gpr10, persist_sec);
+	else
+		clrbits_le32(&psrc->gpr10, persist_sec);
+}
 
 bool is_usb_boot(void)
 {
