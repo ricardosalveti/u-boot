@@ -859,6 +859,13 @@ unsigned long arch_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
 }
 #endif
 
+int boot_mode_is_closed(void)
+{
+	struct src *psrc = (struct src *)SRC_BASE_ADDR;
+
+	return !!(readl(&psrc->sbmr2) & SRC_SBMR2_SEC_CONFIG);
+}
+
 void boot_mode_enable_secondary(bool enable)
 {
 	u32 persist_sec = SRC_GPR10_PERSIST_SECONDARY_BOOT;
