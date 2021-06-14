@@ -43,6 +43,7 @@
 #include <bootcount.h>
 #include <wdt.h>
 #include <video.h>
+#include <watchdog.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 DECLARE_BINMAN_MAGIC_SYM;
@@ -714,8 +715,12 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	if (CONFIG_IS_ENABLED(BOARD_INIT))
 		spl_board_init();
 
-	if (IS_ENABLED(CONFIG_SPL_WATCHDOG) && CONFIG_IS_ENABLED(WDT))
-		initr_watchdog();
+	if (IS_ENABLED(CONFIG_SPL_WATCHDOG)) {
+		if (IS_ENABLED(CONFIG_IS_ENABLED(WDT)))
+			initr_watchdog();
+		else if (IS_ENABLED(HW_WATCHDOG) && IS_ENABLED(IMX_WATCHDOG))
+			hw_watchdog_init();
+	}
 
 	if (IS_ENABLED(CONFIG_SPL_OS_BOOT) || CONFIG_IS_ENABLED(HANDOFF) ||
 	    IS_ENABLED(CONFIG_SPL_ATF) || IS_ENABLED(CONFIG_SPL_OPTEE))
