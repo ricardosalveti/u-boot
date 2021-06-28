@@ -988,21 +988,27 @@ ulong genimg_get_kernel_addr(char * const img_addr)
  */
 int genimg_get_format(const void *img_addr)
 {
+	printf("RSALVETI %s:%d\n", __FUNCTION__, __LINE__);
 #if CONFIG_IS_ENABLED(LEGACY_IMAGE_FORMAT)
 	const image_header_t *hdr;
+	printf("RSALVETI %s:%d getting for legacy\n", __FUNCTION__, __LINE__);
 
 	hdr = (const image_header_t *)img_addr;
 	if (image_check_magic(hdr))
 		return IMAGE_FORMAT_LEGACY;
 #endif
 #if IMAGE_ENABLE_FIT || IMAGE_ENABLE_OF_LIBFDT
+	printf("RSALVETI %s:%d getting for FIT\n", __FUNCTION__, __LINE__);
 	if (fdt_check_header(img_addr) == 0)
 		return IMAGE_FORMAT_FIT;
 #endif
 #ifdef CONFIG_ANDROID_BOOT_IMAGE
+	printf("RSALVETI %s:%d getting for android\n", __FUNCTION__, __LINE__);
 	if (android_image_check_header(img_addr) == 0)
 		return IMAGE_FORMAT_ANDROID;
 #endif
+
+	printf("RSALVETI %s:%d returning invalid\n", __FUNCTION__, __LINE__);
 
 	return IMAGE_FORMAT_INVALID;
 }

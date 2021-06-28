@@ -105,6 +105,10 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	}
 #endif
 
+	printf("RSALVETI %s:%d\n", __FUNCTION__, __LINE__);
+
+	printf("RSALVETI: booting image at addr 0x%08lX ...\n", image_load_addr);
+
 	/* determine if we have a sub command */
 	argc--; argv++;
 	if (argc > 0) {
@@ -131,6 +135,8 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	ulong tee_addr = 0;
 	int ret;
 	ulong zi_start, zi_end;
+
+	printf("RSALVETI %s:%d IMX_OPTEE enabled\n", __FUNCTION__, __LINE__);
 
 	tee_addr = env_get_ulong("tee_addr", 16, tee_addr);
 	if (!tee_addr) {
@@ -162,9 +168,14 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 
 #else
 
+	printf("RSALVETI %s:%d IMX_OPTEE disabled\n", __FUNCTION__, __LINE__);
+
+	printf("RSALVETI %s:%d image format %x\n", __FUNCTION__, __LINE__, genimg_get_format((const void*)image_load_addr));
+
 	switch (genimg_get_format((const void *)image_load_addr)) {
 #if defined(CONFIG_LEGACY_IMAGE_FORMAT)
 	case IMAGE_FORMAT_LEGACY:
+		printf("RSALVETI %s:%d format legacy\n", __FUNCTION__, __LINE__);
 		if (authenticate_image(image_load_addr,
 			image_get_image_size((image_header_t *)image_load_addr)) != 0) {
 			printf("Authenticate uImage Fail, Please check\n");
@@ -174,20 +185,25 @@ int do_bootm(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 #endif
 #ifdef CONFIG_ANDROID_BOOT_IMAGE
 	case IMAGE_FORMAT_ANDROID:
+		printf("RSALVETI %s:%d format android\n", __FUNCTION__, __LINE__);
 		/* Do this authentication in boota command */
 		break;
 #endif
 #if defined(CONFIG_FIT) && defined(CONFIG_FIT_SIGNATURE)
 	case IMAGE_FORMAT_FIT:
+		printf("RSALVETI %s:%d format FIT\n", __FUNCTION__, __LINE__);
 		/* Assume authentication is done by fit signature */
 		break;
 #endif
 	default:
+		printf("RSALVETI %s:%d invalid format\n", __FUNCTION__, __LINE__);
 		printf("Not valid image format for Authentication, Please check\n");
 		return 1;
 	}
 #endif
 #endif
+
+	printf("RSALVETI %s:%d doing boot\n", __FUNCTION__, __LINE__);
 
 	return do_bootm_states(cmdtp, flag, argc, argv, BOOTM_STATE_START |
 		BOOTM_STATE_FINDOS | BOOTM_STATE_FINDOTHER |
