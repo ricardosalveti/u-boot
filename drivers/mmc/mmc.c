@@ -3052,17 +3052,23 @@ int mmc_init_device(int num)
 	struct mmc *m;
 	int ret;
 
+	printf("RSALVETI: trying to init device num %d\n", num);
+
 	if (uclass_get_device_by_seq(UCLASS_MMC, num, &dev)) {
 		ret = uclass_get_device(UCLASS_MMC, num, &dev);
 		if (ret)
 			return ret;
 	}
 
+	printf("RSALVETI: getting mmc dev\n");
+
 	m = mmc_get_mmc_dev(dev);
 	if (!m)
 		return 0;
 	if (m->preinit)
 		mmc_start_init(m);
+
+	printf("RSALVETI: mmc initialized\n");
 
 	return 0;
 }

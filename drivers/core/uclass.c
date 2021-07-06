@@ -319,7 +319,7 @@ int uclass_find_device_by_seq(enum uclass_id id, int seq, struct udevice **devp)
 	int ret;
 
 	*devp = NULL;
-	log_debug("%d\n", seq);
+	printf("RSALVETI: uclass_find_device_by_seq: %d\n", seq);
 	if (seq == -1)
 		return -ENODEV;
 	ret = uclass_get(id, &uc);
@@ -327,14 +327,14 @@ int uclass_find_device_by_seq(enum uclass_id id, int seq, struct udevice **devp)
 		return ret;
 
 	uclass_foreach_dev(dev, uc) {
-		log_debug("   - %d '%s'\n", dev->seq_, dev->name);
+		printf("RSALVETI: uclass_find_device_by_seq:   - %d '%s'\n", dev->seq_, dev->name);
 		if (dev->seq_ == seq) {
 			*devp = dev;
-			log_debug("   - found\n");
+			printf("RSALVETI: uclass_find_device_by_seq:   - found\n");
 			return 0;
 		}
 	}
-	log_debug("   - not found\n");
+	printf("RSALVETI: uclass_find_device_by_seq:   - not found\n");
 
 	return -ENODEV;
 }

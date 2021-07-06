@@ -389,7 +389,7 @@ int mmc_bind(struct udevice *dev, struct mmc *mmc, const struct mmc_config *cfg)
 		return -ENOSYS;
 
 	/* Use the fixed index with aliases node's index */
-	debug("%s: alias devnum=%d\n", __func__, dev_seq(dev));
+	printf("RSALVETI: %s: alias devnum=%d\n", __func__, dev_seq(dev));
 
 	ret = blk_create_devicef(dev, "mmc_blk", "blk", IF_TYPE_MMC,
 			dev_seq(dev), 512, 0, &bdev);
