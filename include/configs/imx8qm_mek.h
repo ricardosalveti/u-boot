@@ -76,6 +76,7 @@
 	CFG_MFG_ENV_SETTINGS \
 	M4_BOOT_ENV \
 	AHAB_ENV \
+	"scriptaddr=0x83100000\0" \
 	"script=boot.scr\0" \
 	"image=Image\0" \
 	SPLASH_IMAGE_ADDR \
