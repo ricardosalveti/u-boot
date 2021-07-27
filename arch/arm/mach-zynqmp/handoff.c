@@ -56,6 +56,7 @@
 struct xfsbl_partition {
 	uint64_t entry_point;
 	uint64_t flags;
+	uint64_t fdt_addr;
 };
 
 /* Structure for handoff parameters to ARM Trusted Firmware (ATF) */
@@ -83,6 +84,7 @@ struct bl31_params *bl2_plat_get_bl31_params(uintptr_t bl32_entry,
 		atfhandoffparams->partition[index].entry_point = bl32_entry;
 		atfhandoffparams->partition[index].flags = FSBL_FLAGS_EL1 << FSBL_FLAGS_EL_SHIFT |
 							   FSBL_FLAGS_SECURE << FSBL_FLAGS_TZ_SHIFT;
+		atfhandoffparams->partition[index].fdt_addr = fdt_addr;
 		index++;
 	}
 
