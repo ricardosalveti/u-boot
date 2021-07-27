@@ -355,6 +355,53 @@ static int multi_boot(void)
 	return 0;
 }
 
+#if IS_ENABLED(CONFIG_SPL_FIT_IMAGE_POST_PROCESS)
+static void add_dna(void *blob, int chosen, size_t *p_size)
+{
+	char dna[100];
+
+	sprintf(dna, "%04x%04x%04x\n",
+		readl(&efuse_base->dna0),
+		readl(&efuse_base->dna1),
+		readl(&efuse_base->dna2));
+
+	fdt_setprop_string(blob, chosen, "zynqmp,dna", dna);
+	*p_size = fdt_totalsize(blob);
+}
+
+/* pass firmware information in the device tree */
+void board_fit_image_post_process(void **p_image, size_t *p_size)
+{
+	void *blob = *p_image;
+	int chosen;
+
+	if (fdt_check_header(blob) < 0)
+		return;
+
+	if (current_el() != 3) {
+		printf("ERROR: cant pass firmware information, wrong EL\n");
+		return;
+	}
+
+	if (CONFIG_IS_ENABLED(ATF_NO_PLATFORM_PARAM)) {
+		printf("ERROR: cant pass firmware information when ATF_NO_PLATFORM_PARAM is enabled\n");
+		return;
+	}
+
+	chosen = fdt_find_or_add_subnode(blob, 0, "secure-chosen");
+	if (chosen < 0) {
+		printf("ERROR: can't pass firmware information in fdt\n");
+		return;
+	}
+
+	add_dna(blob, chosen, p_size);
+}
+#else
+void board_fit_image_post_process(void **p_image, size_t *p_size)
+{
+}
+#endif
+
 #if defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_ZYNQMP_RESTORE_JTAG)
 static void restore_jtag(void)
 {

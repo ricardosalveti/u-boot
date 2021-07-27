@@ -166,4 +166,14 @@ struct pmu_regs {
 
 #define pmu_base ((struct pmu_regs *)ZYNQMP_PMU_BASEADDR)
 
+#define ZYNQMP_EFUSE_BASEADDR		0xFFCC0000
+struct efuse_regs {
+	u32 reserved0[1027];
+	u32 dna0;
+	u32 dna1;
+	u32 dna2;
+};
+
+#define efuse_base ((struct efuse_regs *)ZYNQMP_EFUSE_BASEADDR)
+
 #endif /* _ASM_ARCH_HARDWARE_H */
