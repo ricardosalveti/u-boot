@@ -421,6 +421,18 @@ static void restore_jtag(void)
 }
 #endif
 
+static void secure_boot(void)
+{
+	u32 status;
+
+	status = readl(&csu_base->status);
+	if (status & (BIT(0) | BIT(1))) {
+		printf("Secure Boot:\t%s%s\n",
+		       status & BIT(0) ? "authenticated" : "not authenticated",
+		       status & BIT(1) ? ", encrypted" : ", not encrypted");
+	}
+}
+
 #define PS_SYSMON_ANALOG_BUS_VAL	0x3210
 #define PS_SYSMON_ANALOG_BUS_REG	0xFFA50914
 
@@ -462,8 +474,10 @@ int board_init(void)
 	fpga_add(fpga_xilinx, &zynqmppl);
 #endif
 
-	if (current_el() == 3)
+	if (current_el() == 3) {
 		multi_boot();
+		secure_boot();
+	}
 
 	return 0;
 }
