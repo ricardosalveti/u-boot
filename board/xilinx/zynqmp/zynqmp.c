@@ -355,6 +355,25 @@ static int multi_boot(void)
 	return 0;
 }
 
+#if defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_ZYNQMP_RESTORE_JTAG)
+static void restore_jtag(void)
+{
+	const u32 disable_security_gate = 0xff;
+	const u32 setup_clock = 0x01002002;
+	const u32 setup_jtag = 0x3;
+	const u32 release_pl = 0x1;
+	const u32 enable_debug = 0xff;
+	const u32 do_reset = 0x0;
+
+	writel(disable_security_gate, &csu_base->jtag_sec);
+	writel(enable_debug, &csu_base->jtag_dap_cfg);
+	writel(setup_jtag, &csu_base->jtag_chain_status_wr);
+	writel(setup_clock, &crlapb_base->dbg_lpd_ctrl);
+	writel(do_reset, &crlapb_base->rst_lpd_dbg);
+	writel(release_pl, &csu_base->pcap_prog);
+}
+#endif
+
 #define PS_SYSMON_ANALOG_BUS_VAL	0x3210
 #define PS_SYSMON_ANALOG_BUS_REG	0xFFA50914
 
@@ -374,6 +393,11 @@ int board_init(void)
 		zynqmp_pmufw_load_config_object(zynqmp_pm_cfg_obj,
 						zynqmp_pm_cfg_obj_size);
 	printf("Silicon version:\t%d\n", zynqmp_get_silicon_version());
+
+#if defined(CONFIG_SPL_ZYNQMP_RESTORE_JTAG)
+	/* the CSU disables the JTAG interface when secure boot is enabled */
+	restore_jtag();
+#endif
 #else
 	if (CONFIG_IS_ENABLED(DM_I2C) && CONFIG_IS_ENABLED(I2C_EEPROM))
 		xilinx_read_eeprom();
