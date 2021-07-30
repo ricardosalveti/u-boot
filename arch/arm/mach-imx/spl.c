@@ -345,10 +345,12 @@ ulong board_spl_fit_size_align(ulong size)
 	return size;
 }
 #endif
+#endif
 
 void *board_spl_fit_buffer_addr(ulong fit_size, int sectors, int bl_len)
 {
 	int align_len = ARCH_DMA_MINALIGN - 1;
+	uintptr_t base_addr;
 
 	/* Some devices like SDP, NOR, NAND, SPI are using bl_len =1, so their fit address
 	 * is different with SD/MMC, this cause mismatch with signed address. Thus, adjust
@@ -357,10 +359,14 @@ void *board_spl_fit_buffer_addr(ulong fit_size, int sectors, int bl_len)
 	if (bl_len < 512)
 		bl_len = 512;
 
-	return  (void *)((CONFIG_TEXT_BASE - fit_size - bl_len -
+	if (is_imx8qm() || is_imx8qxp() || is_imx8dxl())
+		base_addr = 0x83000000;
+	else
+		base_addr = CONFIG_TEXT_BASE;
+
+	return (void *)((base_addr - fit_size - bl_len -
 			align_len) & ~align_len);
 }
-#endif
 
 #if IS_ENABLED(CONFIG_SPL_LOAD_FIT)
 static int spl_verify_fit_hash(const void *fit)
