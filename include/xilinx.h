@@ -48,7 +48,7 @@ typedef struct {		/* typedef xilinx_desc */
 } xilinx_desc;			/* end, typedef xilinx_desc */
 
 struct xilinx_fpga_op {
-	int (*load)(xilinx_desc *, const void *, size_t, bitstream_type);
+	int (*load)(xilinx_desc **, const void *, size_t, bitstream_type);
 	int (*loadfs)(xilinx_desc *, const void *, size_t, fpga_fs_info *);
 	int (*loads)(xilinx_desc *desc, const void *buf, size_t bsize,
 		     struct fpga_secure_info *fpga_sec_info);
