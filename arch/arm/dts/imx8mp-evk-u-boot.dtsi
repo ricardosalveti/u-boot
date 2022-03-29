@@ -69,6 +69,10 @@
 	bootph-all;
 };
 
+&{/soc@0/bus@30800000/i2c@30a40000/gpio@20} {
+	bootph-pre-ram;
+};
+
 &pinctrl_pmic {
 	bootph-all;
 };
@@ -143,6 +147,18 @@
 };
 
 &i2c3 {
+	bootph-pre-ram;
+};
+
+&i2c5 {
+	bootph-pre-ram;
+};
+
+&pinctrl_i2c5 {
+	bootph-pre-ram;
+};
+
+&pinctrl_i2c5_gpio {
 	bootph-pre-ram;
 };
 
