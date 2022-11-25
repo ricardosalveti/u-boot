@@ -335,10 +335,13 @@ static int _fastboot_setup_dev(int *switched)
 			devinfo.dev_id = 0;
 		} else if (!strncmp(fastboot_env, "mmc", 3)) {
 			devinfo.type = DEV_MMC;
-			if(env_get("target_ubootdev"))
+			if(env_get("target_ubootdev")) {
 				devinfo.dev_id = simple_strtoul(env_get("target_ubootdev"), NULL, 10);
-			else
+				printf("RSALVETI: dev_id (via target_ubootdev): %d\n", devinfo.dev_id);
+			} else {
 				devinfo.dev_id = mmc_get_env_dev();
+				printf("RSALVETI: dev_id (via mmc_get_env_dev): %d\n", devinfo.dev_id);
+			}
 		} else {
 			return 1;
 		}
@@ -361,6 +364,8 @@ static int _fastboot_setup_dev(int *switched)
 
 	fastboot_devinfo.type	 = devinfo.type;
 	fastboot_devinfo.dev_id = devinfo.dev_id;
+
+	printf("RSALVETI: setting fastboot_devinfo.dev_id to %d\n", devinfo.dev_id);
 
 	return 0;
 }

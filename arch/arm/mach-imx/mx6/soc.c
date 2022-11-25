@@ -734,9 +734,13 @@ int mmc_get_env_dev(void)
 {
 	int devno = mmc_get_boot_dev();
 
+	printf("RSALVETI: %s:%d: devno: %d\n", __FUNCTION__, __LINE__, devno);
+
 	/* If not boot from sd/mmc, use default value */
 	if (devno < 0)
 	    return env_get_ulong("mmcdev", 10, CONFIG_SYS_MMC_ENV_DEV);
+
+	printf("RSALVETI: %s:%d\n", __FUNCTION__, __LINE__);
 
 	return board_mmc_get_env_dev(devno);
 }
