@@ -134,3 +134,47 @@ void build_info(void)
 	}
 	printf("\n");
 }
+
+#if defined(CONFIG_IMX8QM)
+#define FUSE_IMG_SET_OFF_WORD 464
+#elif defined(CONFIG_IMX8QXP) || defined (CONFIG_IMX8DXL)
+#define FUSE_IMG_SET_OFF_WORD 720
+#endif
+
+/* The unit of second image offset number which provision by the fuse bits */
+#define SND_IMG_OFF_UNIT    (0x100000UL)
+
+/*
+ * If num = 0, off = (2 ^ 2) * 1MB
+ * else If num = 2, off = (2 ^ 0) * 1MB
+ * else off = (2 ^ num) * 1MB
+ */
+#define SND_IMG_NUM_TO_OFF(num) \
+        ((1UL << ((0 == (num)) ? 2 : (2 == (num)) ? 0 : (num))) * SND_IMG_OFF_UNIT)
+
+#define GET_SND_IMG_NUM(fuse) \
+        (((fuse) >> 24) & 0x1F)
+
+static bool check_secondary_cnt_set(unsigned long *set_off)
+{
+#if IS_ENABLED(CONFIG_ARCH_IMX8)
+	int ret;
+	u8 set_id = 1;
+	u32 fuse_val = 0;
+
+	if (!(is_imx8qxp() && is_soc_rev(CHIP_REV_B))) {
+		ret = sc_misc_get_boot_container(-1, &set_id);
+		if (ret)
+			return false;
+		/* Secondary boot */
+		if (set_id == 2) {
+			ret = sc_misc_otp_fuse_read(-1, FUSE_IMG_SET_OFF_WORD, &fuse_val);
+			if (!ret) {
+				if (set_off)
+					*set_off = SND_IMG_NUM_TO_OFF(GET_SND_IMG_NUM(fuse_val));
+				return true;
+			}
+		}
+	}
+	return false;
+}

@@ -94,4 +94,7 @@ static inline bool valid_container_hdr(struct container_hdr *container)
 	       container->version == CONTAINER_HDR_VERSION;
 #endif
 }
+
+bool check_secondary_cnt_set(unsigned long *set_off);
+
 #endif
