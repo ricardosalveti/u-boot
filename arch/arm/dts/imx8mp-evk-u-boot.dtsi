@@ -154,6 +154,22 @@
 	bootph-pre-ram;
 };
 
+&pinctrl_i2c2 {
+	bootph-pre-ram;
+};
+
+&pinctrl_i2c2_gpio {
+	bootph-pre-ram;
+};
+
+&pinctrl_i2c3 {
+	bootph-pre-ram;
+};
+
+&pinctrl_i2c3_gpio {
+	bootph-pre-ram;
+};
+
 &pinctrl_i2c5 {
 	bootph-pre-ram;
 };
