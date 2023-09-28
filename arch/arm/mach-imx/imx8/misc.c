@@ -178,3 +178,15 @@ static bool check_secondary_cnt_set(unsigned long *set_off)
 	}
 	return false;
 }
+
+int boot_mode_getprisec(void)
+{
+	unsigned long set_off = 0;
+
+	return ((bool) check_secondary_cnt_set(&set_off)) ? 1 : 0;
+}
+
+void boot_mode_enable_secondary(bool enable)
+{
+	printf("This functionality isn't supported on iMX8 SoC");
+}
