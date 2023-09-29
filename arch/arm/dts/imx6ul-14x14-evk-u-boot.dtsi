@@ -15,13 +15,26 @@
 };
 
 &soc {
+	bootph-pre-ram;
 	bootph-all;
 };
 
 &aips2 {
+	bootph-pre-ram;
 	bootph-all;
 };
 
 &iomuxc {
+	bootph-pre-ram;
+	bootph-all;
+};
+
+&pinctrl_uart1 {
+	bootph-pre-ram;
+	bootph-all;
+};
+
+&uart1 {
+	bootph-pre-ram;
 	bootph-all;
 };
