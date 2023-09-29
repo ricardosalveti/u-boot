@@ -13,6 +13,7 @@
 };
 
 &pinctrl_uart1 {
+	bootph-pre-ram;
 	bootph-all;
 };
 
@@ -26,6 +27,11 @@
 };
 
 &aips3 {
+	bootph-pre-ram;
+	bootph-all;
+};
+
+&uart1 {
 	bootph-pre-ram;
 	bootph-all;
 };
