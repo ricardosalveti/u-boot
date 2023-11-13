@@ -730,8 +730,7 @@ int arch_initr_trap(void)
 struct rom_api *g_rom_api = (struct rom_api *)0x980;
 #endif
 
-#if !defined(CONFIG_SECONDARY_BOOT_RUNTIME_DETECTION) && \
-    defined(CONFIG_IMX8M)
+#if defined(CONFIG_IMX8MN) || defined(CONFIG_IMX8MP)
 #include <spl.h>
 int imx8m_detect_secondary_image_boot(void)
 {
@@ -809,6 +808,18 @@ int spl_mmc_emmc_boot_partition(struct mmc *mmc)
 	}
 
 	return part;
+}
+
+unsigned long spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
+					   unsigned long raw_sect)
+{
+	unsigned long offset = CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR;
+#if defined(CONFIG_iMX8MN)
+	#define UBOOT_MMC2_RAW_SECTOR_OFFSET 0x40
+	if (spl_boot_device() == BOOT_DEVICE_MMC2)
+			offset -= UBOOT_MMC2_RAW_SECTOR_OFFSET;
+#endif
+	return offset;
 }
 
 int boot_mode_getprisec(void)
