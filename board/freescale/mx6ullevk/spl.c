@@ -11,6 +11,7 @@
 #include <asm/arch/imx-regs.h>
 #include <asm/arch/mx6ull_pins.h>
 #include <asm/mach-imx/iomux-v3.h>
+#include <asm/sections.h>
 #include <clock_legacy.h>
 #include <init.h>
 
