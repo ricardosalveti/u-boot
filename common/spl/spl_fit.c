@@ -828,7 +828,7 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 	 * as a U-Boot image, if no OS-type has been declared.
 	 */
 	if (!spl_fit_image_get_os(ctx.fit, node, &spl_image->os))
-		debug("Image OS is %s\n", genimg_get_os_name(spl_image->os));
+		printf("Image OS is %s\n", genimg_get_os_name(spl_image->os));
 	else if (!IS_ENABLED(CONFIG_SPL_OS_BOOT))
 		spl_image->os = IH_OS_U_BOOT;
 
@@ -871,7 +871,7 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 			spl_fit_upload_fpga(&ctx, node, &image_info);
 
 		if (!spl_fit_image_get_os(ctx.fit, node, &os_type))
-			debug("Loadable is %s\n", genimg_get_os_name(os_type));
+			printf("Loadable is %s\n", genimg_get_os_name(os_type));
 
 		if (os_takes_devicetree(os_type)) {
 			spl_fit_append_fdt(&image_info, info, offset, &ctx);
@@ -892,6 +892,8 @@ int spl_load_simple_fit(struct spl_image_info *spl_image,
 						spl_image->fdt_addr,
 						&image_info);
 	}
+
+	printf("RSALVETI: board_spl_fit_post_load\n");
 
 	/*
 	 * If a platform does not provide CONFIG_SYS_UBOOT_START, U-Boot's

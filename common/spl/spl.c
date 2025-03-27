@@ -773,27 +773,27 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 
 	os = spl_image.os;
 	if (os == IH_OS_U_BOOT) {
-		debug("Jumping to %s...\n", spl_phase_name(spl_next_phase()));
+		printf("Jumping to %s...\n", spl_phase_name(spl_next_phase()));
 	} else if (CONFIG_IS_ENABLED(ATF) && os == IH_OS_ARM_TRUSTED_FIRMWARE) {
-		debug("Jumping to U-Boot via ARM Trusted Firmware\n");
+		printf("Jumping to U-Boot via ARM Trusted Firmware\n");
 		spl_fixup_fdt(spl_image_fdt_addr(&spl_image));
 		jump_to_image = &spl_invoke_atf;
 	} else if (CONFIG_IS_ENABLED(OPTEE_IMAGE) && os == IH_OS_TEE) {
-		debug("Jumping to U-Boot via OP-TEE\n");
+		printf("Jumping to U-Boot via OP-TEE\n");
 		spl_board_prepare_for_optee(spl_image_fdt_addr(&spl_image));
 		spl_fixup_fdt(spl_image_fdt_addr(&spl_image));
 		jump_to_image = &jump_to_image_optee;
 	} else if (CONFIG_IS_ENABLED(OPENSBI) && os == IH_OS_OPENSBI) {
-		debug("Jumping to U-Boot via RISC-V OpenSBI\n");
+		printf("Jumping to U-Boot via RISC-V OpenSBI\n");
 		jump_to_image = &spl_invoke_opensbi;
 	} else if (CONFIG_IS_ENABLED(OS_BOOT) && os == IH_OS_LINUX) {
-		debug("Jumping to Linux\n");
+		printf("Jumping to Linux\n");
 		if (IS_ENABLED(CONFIG_SPL_OS_BOOT))
 			spl_fixup_fdt((void *)SPL_PAYLOAD_ARGS_ADDR);
 		spl_board_prepare_for_linux();
 		jump_to_image = &jump_to_image_linux;
 	} else {
-		debug("Unsupported OS image.. Jumping nevertheless..\n");
+		printf("Unsupported OS image.. Jumping nevertheless..\n");
 	}
 	if (CONFIG_IS_ENABLED(SYS_MALLOC_F) &&
 	    !IS_ENABLED(CONFIG_SPL_SYS_MALLOC_SIZE))

@@ -259,6 +259,8 @@ void __noreturn spl_invoke_atf(struct spl_image_info *spl_image)
 	uintptr_t platform_param = (uintptr_t)blob;
 	int node;
 
+	printf("RSALVETI: invoking ATF\n");
+
 	/*
 	 * Find the OP-TEE binary (in /fit-images) load address or
 	 * entry point (if different) and pass it as the BL3-2 entry
